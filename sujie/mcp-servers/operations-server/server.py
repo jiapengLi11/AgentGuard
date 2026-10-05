@@ -12,12 +12,23 @@ server = MCPServer("sujie-operations", version="0.1.0")
 
 
 def resolve(resource: str) -> Path:
-    if resource.startswith("/") or "\\" in resource or ".." in resource.split("/"):
+    parts = resource.split("/")
+    if (
+        resource.startswith("/")
+        or "\\" in resource
+        or any(part in {"", ".", ".."} for part in parts)
+    ):
         raise ValueError("invalid resource")
-    path = (ROOT / resource).resolve()
-    if not path.is_relative_to(ROOT) or path.is_symlink():
+    path = ROOT
+    for part in parts:
+        path = path / part
+        # Inspect the original components: resolve() would erase static link identity.
+        if path.is_symlink() or path.is_junction():
+            raise ValueError("linked resource not supported")
+    resolved = path.resolve()
+    if not resolved.is_relative_to(ROOT) or resolved != path:
         raise ValueError("resource outside workspace")
-    return path
+    return resolved
 
 
 @server.tool(

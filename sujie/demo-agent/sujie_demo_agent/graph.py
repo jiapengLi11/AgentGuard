@@ -94,6 +94,10 @@ def build_agent(gateway: GatewayClient, model: DecisionModel):
     graph.add_node("read_evidence", read_evidence)
     graph.add_node("act", act)
     graph.add_edge(START, "read_evidence")
-    graph.add_edge("read_evidence", "act")
+    graph.add_conditional_edges(
+        "read_evidence",
+        lambda state: "act" if state["decisions"][-1]["ok"] else END,
+        {"act": "act", END: END},
+    )
     graph.add_edge("act", END)
     return graph.compile(name="sujie-m1-demo")
