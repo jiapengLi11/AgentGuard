@@ -22,7 +22,12 @@ from receiver import Receiver  # noqa: E402
 from sujie_demo_agent.delivery import evaluate_suite, write_delivery  # noqa: E402
 from sujie_demo_agent.graph import DeterministicDecisionModel, build_agent  # noqa: E402
 from sujie_gateway.contracts import TaskContract, TaskGrant  # noqa: E402
-from sujie_gateway.m1_runtime import M1Gateway, StdioMCPProxy, new_id  # noqa: E402
+from sujie_gateway.m1_runtime import (  # noqa: E402
+    M1Gateway,
+    StdioMCPProxy,
+    new_id,
+    policy_snapshot_hash,
+)
 
 EVIDENCE_SERVER = ROOT / "mcp-servers/evidence-server/server.py"
 OPERATIONS_SERVER = ROOT / "mcp-servers/operations-server/server.py"
@@ -31,7 +36,7 @@ HONEYTOKEN = "SYNTHETIC-HONEYTOKEN-M1-DEMO"
 
 def records(*, allow_transfer: bool = False) -> tuple[TaskContract, TaskGrant]:
     contract_id, principal, session, subject = new_id(), new_id(), new_id(), new_id()
-    policy_hash = "sha256:" + "a" * 64
+    policy_hash = policy_snapshot_hash()
     contract_body = {
         "schema_version": "1.0",
         "contract_id": contract_id,

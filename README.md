@@ -14,7 +14,7 @@
 |---|---|---|
 | M0 契约与架构守卫 | 已完成 | 9 类 JSON Schema、合法/非法 fixture、架构不变量测试 |
 | M1 真实最小安全闭环 | 已完成 | 真实 stdio MCP、LangGraph 工作流、三态决策、审批绑定、Receiver Oracle、容器隔离 |
-| M2 来源—用途传播 | 待开发 | Artifact、exposure set、传播规则、DAG API |
+| M2 来源—用途传播 | 首轮实现 | 内存 Artifact、视图/映射、exposure、传播/出口、审批来源绑定、脱敏 DAG；真实子 Agent/Memory 待 M3 |
 | M3 五类工具与长链攻击 | 待开发 | exec、Git、子 Agent、Memory、工具注册保护 |
 | M4 检测、对齐与恢复 | 待开发 | 多视图检测、语义偏离、安全重规划 |
 | M5 控制面与前端 | 待开发 | Spring Boot 控制面、Vue 研判控制台 |
@@ -41,6 +41,8 @@ flowchart LR
 M1 容器部署使用两张内部网络：Agent 只连接 Gateway，Receiver 只连接工具网络，Gateway 位于两者之间。Agent 不挂载合成秘密或 Docker Socket，也不能直接访问 Receiver。
 
 ## 快速开始
+
+M2 来源闭环：`python dev.py provenance-demo --output ../artifacts/m2-delivery`。PUBLIC/SECRET 输入产生相同摘要，分别观察批准后真实发送与敏感外发阻断，并继续生成报告。运行、测试与接力边界见 [M2 首轮验收说明](sujie/docs/M2_ACCEPTANCE.md)。
 
 本轮提供可接力的 M1 交付雏形：在 `sujie/` 下运行 `python dev.py deliver`，生成真实协议演示的离线回放与可校验 ZIP。详细入口和边界见 [交付与接力说明](sujie/docs/DELIVERY_PROTOTYPE.md)。
 

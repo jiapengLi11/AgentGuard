@@ -15,7 +15,7 @@ M0、M1 已验收。当前完成两个真实 stdio MCP Server、MCP Proxy、Lang
 [M1 验收记录](docs/M1_ACCEPTANCE.md)与 [M1 进度记录](docs/M1_PROGRESS.md)。
 
 尚未运行真实 LLM，因此没有比赛 ASR 成绩。
-Spring Boot、Vue、来源传播及其他工具仍未实现。历史 AgentGuard 代码未复用为安全内核。
+Spring Boot、Vue 及其他工具仍未实现。来源传播已完成首轮单进程闭环，见 [M2 验收说明](docs/M2_ACCEPTANCE.md)；真实子 Agent/Memory、持久化和完整出口覆盖待后续。历史 AgentGuard 代码未复用为安全内核。
 
 2026-10-05 补充修复授权有效期、预算、Grant 归属、静态链接路径、外发禁止和失败分支；本机检查 202 项测试通过。见 [M1 修复记录](docs/M1_HARDENING_2026-10-05.md)和 [M2 实施方案](docs/M2_IMPLEMENTATION_PLAN.md)。
 
@@ -34,6 +34,8 @@ Spring Boot、Vue、来源传播及其他工具仍未实现。历史 AgentGuard 
 | deploy | Compose 部署 | M1 四容器、双内部网络已在 Ubuntu VM 验收 |
 
 ## 快速验证
+
+来源闭环演示：`python dev.py provenance-demo --output ../artifacts/m2-delivery`，包含真实 MCP、Base64 解码视图、相同摘要下 PUBLIC/SECRET 出口对照、ASK 暂停恢复与阻断后报告继续。可选 API 的 `SUJIE_PROVENANCE_MODE=1` 和来源目录配置详见 [M2 验收说明](docs/M2_ACCEPTANCE.md)。
 
 交付雏形：`python dev.py deliver` 运行真实 M1 演示，生成离线回放、验收 JSON、事件元数据和 SHA-256 ZIP 包。`python dev.py verify-delivery --output <目录>` 校验解压后的交付结果。该回放不包含交互审批或 M2 来源 DAG；运行与队友接力说明见 [DELIVERY_PROTOTYPE.md](docs/DELIVERY_PROTOTYPE.md)。
 
