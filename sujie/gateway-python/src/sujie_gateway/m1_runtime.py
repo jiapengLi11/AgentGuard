@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-import os
+import hashlib
 import re
 import time
 from collections.abc import Callable
@@ -26,14 +26,18 @@ from .contracts import (
     snapshot_hash,
 )
 from .dsl import evaluate, load_rules
+from .identifiers import new_id
 from .invariants import approval_is_valid, check_clock, make_binding, scope_within
 
-CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+
+def policy_text(name: str = "m1.yaml") -> str:
+    if name not in {"m1.yaml", "m2.yaml"}:
+        raise ValueError("UNKNOWN_POLICY")
+    return (Path(__file__).resolve().parents[2] / "policies" / name).read_text("utf-8")
 
 
-def new_id() -> str:
-    value = (int(time.time() * 1000) << 80) | int.from_bytes(os.urandom(10), "big")
-    return "".join(CROCKFORD[(value >> (5 * (25 - i))) & 31] for i in range(26))
+def policy_snapshot_hash(name: str = "m1.yaml") -> str:
+    return "sha256:" + hashlib.sha256(policy_text(name).encode("utf-8")).hexdigest()
 
 
 def sha(value: Any) -> str:
@@ -257,9 +261,10 @@ class PendingApproval:
 class M1Policy:
     """Deterministic preconditions plus a typed, data-only M1 policy DSL."""
 
-    def __init__(self) -> None:
-        policy = Path(__file__).resolve().parents[2] / "policies" / "m1.yaml"
-        self.rules = load_rules(policy.read_text("utf-8"))
+    def __init__(self, policy_name: str = "m1.yaml") -> None:
+        text = policy_text(policy_name)
+        self.rules = load_rules(text)
+        self.snapshot_hash = "sha256:" + hashlib.sha256(text.encode("utf-8")).hexdigest()
 
     def decide(
         self,
@@ -270,6 +275,7 @@ class M1Policy:
         now: datetime | None = None,
         contract_usage: dict[str, int] | None = None,
         grant_usage: dict[str, int] | None = None,
+        data_facts: dict[str, Any] | None = None,
     ) -> GateDecision:
         a, c, g = action.to_dict(), contract.to_dict(), grant.to_dict()
         kind, resources = a["effect"]["kind"], a["effect"]["resources"]
@@ -330,6 +336,7 @@ class M1Policy:
             {
                 "runtime": {"prerequisites_passed": True},
                 "action": {"effect": a["effect"]},
+                "data": data_facts or {},
             },
         )
         translated = {"allow": "ALLOW", "ask": "ASK", "block": "BLOCK", "hard_block": "BLOCK"}
@@ -364,6 +371,7 @@ class TraceLedger:
         action_id: str | None = None,
         decision_id: str | None = None,
         payload: dict[str, Any] | None = None,
+        artifact_ids: list[str] | None = None,
     ) -> str:
         event_id = new_id()
         body = payload or {}
@@ -377,7 +385,7 @@ class TraceLedger:
                 "actor_id": actor_id,
                 "session_id": self._contract["session_id"],
                 "contract_id": self._contract["contract_id"],
-                "artifact_ids": [],
+                "artifact_ids": list(artifact_ids or []),
                 "action_id": action_id,
                 "decision_id": decision_id,
                 "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -405,6 +413,36 @@ class M1Gateway:
                 payload={"qualified_name": spec.qualified_name, "version_hash": spec.version_hash},
             )
 
+    def _make_action(
+        self, tool: str, arguments: dict[str, Any], *, input_artifacts: list[str] | None = None
+    ) -> SemanticAction:
+        return semantic_action(
+            tool,
+            arguments,
+            self.proxy.registry[tool],
+            self.contract,
+            self.grant,
+            input_artifacts=input_artifacts,
+        )
+
+    def _input_hashes(self, action: SemanticAction) -> tuple[str, str]:
+        return sha([]), sha([])
+
+    def _record_decision(
+        self, action: SemanticAction, decision: GateDecision, decision_id: str
+    ) -> None:
+        pass
+
+    def _after_result(
+        self,
+        action: SemanticAction,
+        tool: str,
+        arguments: dict[str, Any],
+        data: dict[str, Any],
+        event_id: str,
+    ) -> dict[str, Any]:
+        return {}
+
     def _decide(self, action: SemanticAction) -> GateDecision:
         return self.policy.decide(
             action,
@@ -428,6 +466,7 @@ class M1Gateway:
         a = action.to_dict()
         permitted = decision.decision == expected
         reason = decision.reason
+        input_hash, provenance_hash = self._input_hashes(action)
         if pending is not None and (
             pending.approval is None
             or not approval_is_valid(
@@ -437,8 +476,8 @@ class M1Gateway:
                 self.contract,
                 self.grant,
                 now=utc_now(),
-                input_content_hash=sha([]),
-                provenance_snapshot_hash=sha([]),
+                input_content_hash=input_hash,
+                provenance_snapshot_hash=provenance_hash,
             )
         ):
             permitted, reason = False, "APPROVAL_STALE"
@@ -448,6 +487,7 @@ class M1Gateway:
             parents=[parent],
             action_id=a["action_id"],
             decision_id=decision_id,
+            artifact_ids=a["input_artifacts"],
             payload={"binding_valid": permitted, "reason": reason},
         )
         if not permitted:
@@ -466,9 +506,7 @@ class M1Gateway:
         try:
             # Bind and execute an owned copy, not a caller-mutated dictionary after an await.
             args = load_json(canonical_json(args))
-            action = semantic_action(
-                tool, args, self.proxy.registry[tool], self.contract, self.grant
-            )
+            action = self._make_action(tool, args)
         except (KeyError, TypeError, ValueError):
             self.trace.emit(
                 "TOOL_CALL_DECIDED",
@@ -479,6 +517,7 @@ class M1Gateway:
             return {"ok": False, "decision": "BLOCK", "code": "INVALID_ACTION"}
         decision = self._decide(action)
         decision_id = new_id()
+        self._record_decision(action, decision, decision_id)
         reason_code = re.sub(r"[^A-Z0-9_]", "_", decision.reason.upper())[:96]
         decision_record = DecisionRecord(
             {
@@ -503,10 +542,12 @@ class M1Gateway:
             parents=[proposed],
             action_id=action.to_dict()["action_id"],
             decision_id=decision_id,
+            artifact_ids=action.to_dict()["input_artifacts"],
             payload={"decision": decision.decision, "reason": decision.reason},
         )
         if decision.decision == "ASK":
             now = utc_now()
+            input_hash, provenance_hash = self._input_hashes(action)
             requested = self.trace.emit(
                 "APPROVAL_REQUESTED",
                 actor_id=actor,
@@ -520,8 +561,8 @@ class M1Gateway:
                     action,
                     self.contract,
                     self.grant,
-                    input_content_hash=sha([]),
-                    provenance_snapshot_hash=sha([]),
+                    input_content_hash=input_hash,
+                    provenance_snapshot_hash=provenance_hash,
                 )
             )
             async with self._approval_lock:
@@ -578,15 +619,20 @@ class M1Gateway:
                 payload={"tool": tool, "ok": False, "code": str(error)},
             )
             return {"ok": False, "decision": "ALLOW", "code": "TOOL_EXECUTION_FAILED"}
-        self.trace.emit(
+        executed = self.trace.emit(
             "EXECUTION_RESULT",
             actor_id=actor,
             parents=[decided],
             action_id=action.to_dict()["action_id"],
             decision_id=decision_id,
+            artifact_ids=action.to_dict()["input_artifacts"],
             payload={"tool": tool, "ok": True},
         )
-        return {"ok": True, "decision": "ALLOW", "data": result}
+        try:
+            metadata = self._after_result(action, tool, args, result, executed)
+        except ValueError:
+            return {"ok": False, "decision": "ALLOW", "code": "PROVENANCE_RESULT_REJECTED"}
+        return {"ok": True, "decision": "ALLOW", "data": result, **metadata}
 
     async def approve(self, decision_id: str, principal_id: str) -> dict[str, Any]:
         """Trusted control-plane entry point; it is deliberately not an Agent tool."""
@@ -604,15 +650,15 @@ class M1Gateway:
                 return {"ok": False, "code": "APPROVER_MISMATCH"}
             if now >= pending.expires_at:
                 return {"ok": False, "code": "APPROVAL_EXPIRED"}
-            empty_snapshot = sha([])
+            input_hash, provenance_hash = self._input_hashes(pending.action)
             if self._decide(pending.action).decision != "ASK":
                 return {"ok": False, "code": "APPROVAL_STALE"}
             binding = make_binding(
                 pending.action,
                 self.contract,
                 self.grant,
-                input_content_hash=empty_snapshot,
-                provenance_snapshot_hash=empty_snapshot,
+                input_content_hash=input_hash,
+                provenance_snapshot_hash=provenance_hash,
             )
             if canonical_json(binding) != pending.binding_json:
                 return {"ok": False, "code": "APPROVAL_STALE"}
@@ -656,7 +702,7 @@ class M1Gateway:
             if pending.approval is None:
                 return {"ok": False, "code": "APPROVAL_REQUIRED"}
             now = utc_now()
-            empty_snapshot = sha([])
+            input_hash, provenance_hash = self._input_hashes(pending.action)
             if not approval_is_valid(
                 pending.approval,
                 pending.decision,
@@ -664,19 +710,17 @@ class M1Gateway:
                 self.contract,
                 self.grant,
                 now=now,
-                input_content_hash=empty_snapshot,
-                provenance_snapshot_hash=empty_snapshot,
+                input_content_hash=input_hash,
+                provenance_snapshot_hash=provenance_hash,
             ):
                 return {"ok": False, "code": "APPROVAL_STALE"}
 
             arguments = load_json(pending.arguments_json)
             try:
-                fresh = semantic_action(
+                fresh = self._make_action(
                     pending.tool,
                     arguments,
-                    self.proxy.registry[pending.tool],
-                    self.contract,
-                    self.grant,
+                    input_artifacts=pending.action.to_dict()["input_artifacts"],
                 )
             except (KeyError, TypeError, ValueError):
                 return {"ok": False, "code": "APPROVAL_STALE"}
@@ -684,6 +728,7 @@ class M1Gateway:
             fresh_body["action_id"] = pending.action.to_dict()["action_id"]
             if sha(fresh_body) != sha(pending.action.to_dict()):
                 return {"ok": False, "code": "APPROVAL_STALE"}
+            fresh = SemanticAction(fresh_body)
             if self._decide(fresh).decision != "ASK":
                 return {"ok": False, "code": "APPROVAL_STALE"}
 
@@ -730,12 +775,27 @@ class M1Gateway:
             approval_body["consumed"] = True
             pending.approval = ApprovalRecord(approval_body)
             pending.terminal_result = result
-            self.trace.emit(
+            executed = self.trace.emit(
                 "EXECUTION_RESULT",
                 actor_id=self.grant.to_dict()["subject_id"],
                 parents=[checked],
                 action_id=pending.action.to_dict()["action_id"],
                 decision_id=decision_id,
+                artifact_ids=pending.action.to_dict()["input_artifacts"],
                 payload={"tool": pending.tool, "ok": result["ok"]},
             )
+            if result["ok"]:
+                try:
+                    result.update(
+                        self._after_result(pending.action, pending.tool, arguments, data, executed)
+                    )
+                except ValueError:
+                    result = {
+                        "ok": False,
+                        "decision": "ASK",
+                        "approved": True,
+                        "code": "PROVENANCE_RESULT_REJECTED",
+                        "replayed": False,
+                    }
+                    pending.terminal_result = result
             return result

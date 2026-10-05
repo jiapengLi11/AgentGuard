@@ -1,0 +1,32 @@
+schema_version: "0.1"
+rules:
+  - id: allow_bounded_m2_action
+    effect: allow
+    when:
+      - field: runtime.prerequisites_passed
+        op: eq
+        value: true
+  - id: ask_external_transfer
+    effect: ask
+    when:
+      - field: runtime.prerequisites_passed
+        op: eq
+        value: true
+      - field: action.effect.kind
+        op: eq
+        value: data.transfer
+      - field: action.effect.destination_trust
+        op: in
+        value: [UNTRUSTED_EXTERNAL]
+  - id: block_sensitive_egress
+    effect: hard_block
+    when:
+      - field: action.effect.kind
+        op: eq
+        value: data.transfer
+      - field: data.max_confidentiality
+        op: gte
+        value: 2
+      - field: action.effect.destination_trust
+        op: in
+        value: [UNTRUSTED_EXTERNAL]

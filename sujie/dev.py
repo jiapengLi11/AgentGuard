@@ -1,4 +1,4 @@
-"""Cross-platform M0/M1 commands; invoke with the project's Python 3.12 venv."""
+"""Cross-platform development commands; invoke with the project's Python 3.12 venv."""
 
 import argparse
 import subprocess
@@ -23,6 +23,7 @@ def main() -> int:
             "demo",
             "deliver",
             "verify-delivery",
+            "provenance-demo",
         ],
     )
     parser.add_argument(
@@ -31,8 +32,12 @@ def main() -> int:
     args = parser.parse_args()
     if sys.version_info[:2] != (3, 12):
         parser.error("The frozen design requires Python 3.12.")
-    if args.output is not None and args.command not in {"deliver", "verify-delivery"}:
-        parser.error("--output is only valid for deliver and verify-delivery.")
+    if args.output is not None and args.command not in {
+        "deliver",
+        "verify-delivery",
+        "provenance-demo",
+    }:
+        parser.error("--output is only valid for deliver, verify-delivery and provenance-demo.")
     if args.command == "verify-delivery":
         if args.output is None:
             parser.error("verify-delivery requires --output.")
@@ -54,6 +59,11 @@ def main() -> int:
                 UTC
             ).strftime("%Y%m%dT%H%M%S%fZ")
             command.extend(["--output", str(output.resolve())])
+        return subprocess.run(command, cwd=ROOT, check=False).returncode
+    if args.command == "provenance-demo":
+        command = [sys.executable, "demo-agent/run_provenance_demo.py"]
+        if args.output:
+            command.extend(["--output", str(args.output.resolve())])
         return subprocess.run(command, cwd=ROOT, check=False).returncode
     commands = {
         "test": [["pytest", "-q"]],
