@@ -152,11 +152,14 @@ async def test_E2E_ASK_001_bound_approval_executes_once(tmp_path, fixture_docume
         }
         base_contract, base_grant = make_contracts(fixture_document)
         contract_body = base_contract.to_dict()
+        contract_body["forbidden_effects"].remove("external.data_transfer")
         contract_body["allowed_effects"].append(
             {"kind": "data.transfer", "resource": "https://receiver.invalid/upload"}
         )
         grant_body = base_grant.to_dict()
         grant_body["effects"].append("data.transfer")
+        grant_body["resource_scopes"].append("https://receiver.invalid/upload")
+        grant_body["budgets"]["network_calls"] = 2
         contract, grant = TaskContract(contract_body), TaskGrant(grant_body)
         async with StdioMCPProxy(params) as proxy:
             gateway = M1Gateway(proxy, contract, grant)

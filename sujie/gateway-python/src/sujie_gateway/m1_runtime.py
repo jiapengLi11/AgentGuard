@@ -6,6 +6,7 @@ import asyncio
 import os
 import re
 import time
+from collections.abc import Callable
 from contextlib import AsyncExitStack
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -25,7 +26,7 @@ from .contracts import (
     snapshot_hash,
 )
 from .dsl import evaluate, load_rules
-from .invariants import approval_is_valid, make_binding, scope_within
+from .invariants import approval_is_valid, check_clock, make_binding, scope_within
 
 CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 
@@ -55,6 +56,10 @@ class ToolSpec:
     tool_name: str
     version_hash: str
     input_schema: dict[str, Any]
+
+
+class ExecutionBlocked(RuntimeError):
+    """Safe rejection after asynchronous discovery but before actual tool dispatch."""
 
 
 class StdioMCPProxy:
@@ -102,7 +107,13 @@ class StdioMCPProxy:
         await self._stack.aclose()
         self._clients.clear()
 
-    async def invoke(self, qualified_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    async def invoke(
+        self,
+        qualified_name: str,
+        arguments: dict[str, Any],
+        *,
+        before_execute: Callable[[], None] | None = None,
+    ) -> dict[str, Any]:
         spec = self.registry.get(qualified_name)
         if spec is None:
             raise RuntimeError("UNKNOWN_TOOL")
@@ -126,6 +137,9 @@ class StdioMCPProxy:
         )
         if observed != spec.version_hash:
             raise RuntimeError("TOOL_VERSION_DRIFT")
+        if before_execute is not None:
+            # The gateway rechecks authority and consumes budget without yielding.
+            before_execute()
         result = await self._clients[qualified_name.split(".", 1)[0]].call_tool(
             spec.tool_name, arguments=arguments
         )
@@ -232,6 +246,7 @@ class PendingApproval:
     action: SemanticAction
     tool: str
     arguments_json: str
+    binding_json: str
     requested_event_id: str
     created_at: datetime
     expires_at: datetime
@@ -247,13 +262,31 @@ class M1Policy:
         self.rules = load_rules(policy.read_text("utf-8"))
 
     def decide(
-        self, action: SemanticAction, contract: TaskContract, grant: TaskGrant
+        self,
+        action: SemanticAction,
+        contract: TaskContract,
+        grant: TaskGrant,
+        *,
+        now: datetime | None = None,
+        contract_usage: dict[str, int] | None = None,
+        grant_usage: dict[str, int] | None = None,
     ) -> GateDecision:
         a, c, g = action.to_dict(), contract.to_dict(), grant.to_dict()
         kind, resources = a["effect"]["kind"], a["effect"]["resources"]
         if c["status"] != "ACTIVE" or g["status"] != "ACTIVE":
             return GateDecision("BLOCK", True, "GRANT_INVALID", action)
-        if a["contract_id"] != c["contract_id"] or a["grant_id"] != g["grant_id"]:
+        current = now if now is not None else utc_now()
+        check_clock(current)
+        if current >= min(
+            datetime.fromisoformat(c["expires_at"]), datetime.fromisoformat(g["expires_at"])
+        ):
+            return GateDecision("BLOCK", True, "GRANT_EXPIRED", action)
+        if (
+            a["contract_id"] != c["contract_id"]
+            or g["contract_id"] != c["contract_id"]
+            or a["grant_id"] != g["grant_id"]
+            or a["subject_id"] != g["subject_id"]
+        ):
             return GateDecision("BLOCK", True, "GRANT_MISMATCH", action)
         granted = kind in g["effects"] or (
             kind == "file.write"
@@ -265,10 +298,14 @@ class M1Policy:
         if any(
             not any(scope_within(resource, scope) for scope in g["resource_scopes"])
             for resource in resources
-            if resource.startswith("/")
         ):
             return GateDecision("BLOCK", True, "RESOURCE_OUT_OF_SCOPE", action)
-        if kind in c["forbidden_effects"]:
+        forbidden = set(c["forbidden_effects"])
+        external_transfer = kind == "data.transfer" and a["effect"]["destination_trust"] in {
+            "TRUSTED_EXTERNAL",
+            "UNTRUSTED_EXTERNAL",
+        }
+        if kind in forbidden or (external_transfer and "external.data_transfer" in forbidden):
             return GateDecision("BLOCK", True, "CONTRACT_FORBIDS_EFFECT", action)
         permitted = any(
             item["kind"] == kind
@@ -282,6 +319,12 @@ class M1Policy:
         )
         if not permitted:
             return GateDecision("BLOCK", False, "EFFECT_OUTSIDE_CONTRACT", action)
+        for document, usage in ((c, contract_usage or {}), (g, grant_usage or {})):
+            if any(
+                usage.get(dimension, 0) + cost > document["budgets"].get(dimension, 0)
+                for dimension, cost in execution_cost(action).items()
+            ):
+                return GateDecision("BLOCK", True, "BUDGET_EXHAUSTED", action)
         outcome, matched = evaluate(
             self.rules,
             {
@@ -294,6 +337,14 @@ class M1Policy:
         return GateDecision(
             decision, outcome == "hard_block", matched[-1] if matched else "NO_RULE", action
         )
+
+
+def execution_cost(action: SemanticAction) -> dict[str, int]:
+    """M1 counts dispatch attempts, including failures, rather than proposals or replays."""
+    cost = {"tool_calls": 1}
+    if action.to_dict()["effect"]["kind"] == "data.transfer":
+        cost["network_calls"] = 1
+    return cost
 
 
 class TraceLedger:
@@ -345,6 +396,8 @@ class M1Gateway:
         self.trace = TraceLedger(contract)
         self._pending: dict[str, PendingApproval] = {}
         self._approval_lock = asyncio.Lock()
+        self._contract_usage: dict[str, dict[str, int]] = {}
+        self._grant_usage: dict[str, dict[str, int]] = {}
         for spec in proxy.registry.values():
             self.trace.emit(
                 "TOOL_REGISTERED",
@@ -352,10 +405,67 @@ class M1Gateway:
                 payload={"qualified_name": spec.qualified_name, "version_hash": spec.version_hash},
             )
 
+    def _decide(self, action: SemanticAction) -> GateDecision:
+        return self.policy.decide(
+            action,
+            self.contract,
+            self.grant,
+            contract_usage=self._contract_usage.get(self.contract.to_dict()["contract_id"], {}),
+            grant_usage=self._grant_usage.get(self.grant.to_dict()["grant_id"], {}),
+        )
+
+    def _reserve_execution(
+        self,
+        action: SemanticAction,
+        expected: str,
+        parent: str,
+        decision_id: str,
+        *,
+        pending: PendingApproval | None = None,
+    ) -> None:
+        """Atomic on this gateway's event loop: no await between recheck and reservation."""
+        decision = self._decide(action)
+        a = action.to_dict()
+        permitted = decision.decision == expected
+        reason = decision.reason
+        if pending is not None and (
+            pending.approval is None
+            or not approval_is_valid(
+                pending.approval,
+                pending.decision,
+                action,
+                self.contract,
+                self.grant,
+                now=utc_now(),
+                input_content_hash=sha([]),
+                provenance_snapshot_hash=sha([]),
+            )
+        ):
+            permitted, reason = False, "APPROVAL_STALE"
+        self.trace.emit(
+            "COMMIT_CHECKED",
+            actor_id=a["subject_id"],
+            parents=[parent],
+            action_id=a["action_id"],
+            decision_id=decision_id,
+            payload={"binding_valid": permitted, "reason": reason},
+        )
+        if not permitted:
+            raise ExecutionBlocked(reason)
+        for ledger, key in (
+            (self._contract_usage, a["contract_id"]),
+            (self._grant_usage, a["grant_id"]),
+        ):
+            usage = ledger.setdefault(key, {})
+            for dimension, cost in execution_cost(action).items():
+                usage[dimension] = usage.get(dimension, 0) + cost
+
     async def call(self, tool: str, args: dict[str, Any]) -> dict[str, Any]:
         actor = self.grant.to_dict()["subject_id"]
         proposed = self.trace.emit("TOOL_PROPOSED", actor_id=actor, payload={"tool": tool})
         try:
+            # Bind and execute an owned copy, not a caller-mutated dictionary after an await.
+            args = load_json(canonical_json(args))
             action = semantic_action(
                 tool, args, self.proxy.registry[tool], self.contract, self.grant
             )
@@ -367,7 +477,7 @@ class M1Gateway:
                 payload={"decision": "BLOCK", "reason": "INVALID_ACTION"},
             )
             return {"ok": False, "decision": "BLOCK", "code": "INVALID_ACTION"}
-        decision = self.policy.decide(action, self.contract, self.grant)
+        decision = self._decide(action)
         decision_id = new_id()
         reason_code = re.sub(r"[^A-Z0-9_]", "_", decision.reason.upper())[:96]
         decision_record = DecisionRecord(
@@ -405,12 +515,22 @@ class M1Gateway:
                 decision_id=decision_id,
                 payload={"expires_in_seconds": 300},
             )
+            binding_json = canonical_json(
+                make_binding(
+                    action,
+                    self.contract,
+                    self.grant,
+                    input_content_hash=sha([]),
+                    provenance_snapshot_hash=sha([]),
+                )
+            )
             async with self._approval_lock:
                 self._pending[decision_id] = PendingApproval(
                     decision=decision_record,
                     action=action,
                     tool=tool,
                     arguments_json=canonical_json(args),
+                    binding_json=binding_json,
                     requested_event_id=requested,
                     created_at=now,
                     expires_at=now + timedelta(minutes=5),
@@ -426,7 +546,28 @@ class M1Gateway:
                 else [],
             }
         try:
-            result = await self.proxy.invoke(tool, args)
+            result = await self.proxy.invoke(
+                tool,
+                args,
+                before_execute=lambda: self._reserve_execution(
+                    action, "ALLOW", decided, decision_id
+                ),
+            )
+        except ExecutionBlocked as error:
+            self.trace.emit(
+                "TOOL_CALL_DECIDED",
+                actor_id=actor,
+                parents=[decided],
+                action_id=action.to_dict()["action_id"],
+                decision_id=decision_id,
+                payload={"decision": "BLOCK", "reason": str(error)},
+            )
+            return {
+                "ok": False,
+                "decision": "BLOCK",
+                "code": str(error),
+                "decision_id": decision_id,
+            }
         except RuntimeError as error:
             self.trace.emit(
                 "EXECUTION_RESULT",
@@ -464,19 +605,24 @@ class M1Gateway:
             if now >= pending.expires_at:
                 return {"ok": False, "code": "APPROVAL_EXPIRED"}
             empty_snapshot = sha([])
+            if self._decide(pending.action).decision != "ASK":
+                return {"ok": False, "code": "APPROVAL_STALE"}
+            binding = make_binding(
+                pending.action,
+                self.contract,
+                self.grant,
+                input_content_hash=empty_snapshot,
+                provenance_snapshot_hash=empty_snapshot,
+            )
+            if canonical_json(binding) != pending.binding_json:
+                return {"ok": False, "code": "APPROVAL_STALE"}
             approval = ApprovalRecord(
                 {
                     "schema_version": "1.0",
                     "approval_id": new_id(),
                     "decision_id": decision_id,
                     "approved_by": principal_id,
-                    "binding": make_binding(
-                        pending.action,
-                        self.contract,
-                        self.grant,
-                        input_content_hash=empty_snapshot,
-                        provenance_snapshot_hash=empty_snapshot,
-                    ),
+                    "binding": binding,
                     "status": "APPROVED",
                     "created_at": utc_text(pending.created_at),
                     "approved_at": utc_text(now),
@@ -538,7 +684,7 @@ class M1Gateway:
             fresh_body["action_id"] = pending.action.to_dict()["action_id"]
             if sha(fresh_body) != sha(pending.action.to_dict()):
                 return {"ok": False, "code": "APPROVAL_STALE"}
-            if self.policy.decide(fresh, self.contract, self.grant).decision != "ASK":
+            if self._decide(fresh).decision != "ASK":
                 return {"ok": False, "code": "APPROVAL_STALE"}
 
             checked = self.trace.emit(
@@ -550,12 +696,26 @@ class M1Gateway:
                 payload={"binding_valid": True},
             )
             try:
-                data = await self.proxy.invoke(pending.tool, arguments)
+                data = await self.proxy.invoke(
+                    pending.tool,
+                    arguments,
+                    before_execute=lambda: self._reserve_execution(
+                        pending.action, "ASK", checked, decision_id, pending=pending
+                    ),
+                )
                 result = {
                     "ok": True,
                     "decision": "ASK",
                     "approved": True,
                     "data": data,
+                    "replayed": False,
+                }
+            except ExecutionBlocked as error:
+                result = {
+                    "ok": False,
+                    "decision": "BLOCK",
+                    "approved": True,
+                    "code": str(error),
                     "replayed": False,
                 }
             except RuntimeError:

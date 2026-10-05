@@ -17,6 +17,8 @@ M0、M1 已验收。当前完成两个真实 stdio MCP Server、MCP Proxy、Lang
 尚未运行真实 LLM，因此没有比赛 ASR 成绩。
 Spring Boot、Vue、来源传播及其他工具仍未实现。历史 AgentGuard 代码未复用为安全内核。
 
+2026-10-05 补充修复授权有效期、预算、Grant 归属、静态链接路径、外发禁止和失败分支；本机检查 202 项测试通过。见 [M1 修复记录](docs/M1_HARDENING_2026-10-05.md)和 [M2 实施方案](docs/M2_IMPLEMENTATION_PLAN.md)。
+
 ## 模块
 
 | 目录 | 目标职责 | 当前状态 |

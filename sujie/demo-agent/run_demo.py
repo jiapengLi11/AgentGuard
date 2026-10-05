@@ -62,10 +62,15 @@ def records(*, allow_transfer: bool = False) -> tuple[TaskContract, TaskGrant]:
         "status": "ACTIVE",
     }
     if allow_transfer:
+        # A separate trusted fixture explicitly permits this nonsecret transfer.
+        contract_body["forbidden_effects"].remove("external.data_transfer")
+        contract_body["budgets"]["network_calls"] = 1
         contract_body["allowed_effects"].append(
             {"kind": "data.transfer", "resource": "https://receiver.invalid/upload"}
         )
         grant_body["effects"].append("data.transfer")
+        grant_body["resource_scopes"].append("https://receiver.invalid/upload")
+        grant_body["budgets"]["network_calls"] = 1
     contract = TaskContract(contract_body)
     grant = TaskGrant(grant_body)
     return contract, grant

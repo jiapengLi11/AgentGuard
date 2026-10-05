@@ -2,6 +2,8 @@
 
 日期：2026-09-12。状态：M1 验收通过；尚未产生真实 LLM 比赛指标。
 
+2026-10-05 补充记录：执行边界修复后，macOS 本机完整检查为 202 passed。授权过期、预算耗尽、Grant 关联、静态符号链接和外发硬禁止已加入回归；审批等待与工具发现后的失效检查也已补齐。详见 [M1_HARDENING_2026-10-05.md](M1_HARDENING_2026-10-05.md)。下文保留原验收环境与记录，未据此更新历史 VM 结果；M2 当前只有 [实施方案](M2_IMPLEMENTATION_PLAN.md)。
+
 ## 已实现
 
 - MCP Python SDK 2.1.1：Evidence、Operations 两个独立 stdio Server 进程。
