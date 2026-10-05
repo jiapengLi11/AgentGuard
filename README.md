@@ -42,6 +42,8 @@ M1 容器部署使用两张内部网络：Agent 只连接 Gateway，Receiver 只
 
 ## 快速开始
 
+本轮提供可接力的 M1 交付雏形：在 `sujie/` 下运行 `python dev.py deliver`，生成真实协议演示的离线回放与可校验 ZIP。详细入口和边界见 [交付与接力说明](sujie/docs/DELIVERY_PROTOTYPE.md)。
+
 要求 Python 3.12。Windows PowerShell：
 
 ```powershell

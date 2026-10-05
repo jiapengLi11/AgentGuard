@@ -35,6 +35,8 @@ Spring Boot、Vue、来源传播及其他工具仍未实现。历史 AgentGuard 
 
 ## 快速验证
 
+交付雏形：`python dev.py deliver` 运行真实 M1 演示，生成离线回放、验收 JSON、事件元数据和 SHA-256 ZIP 包。`python dev.py verify-delivery --output <目录>` 校验解压后的交付结果。该回放不包含交互审批或 M2 来源 DAG；运行与队友接力说明见 [DELIVERY_PROTOTYPE.md](docs/DELIVERY_PROTOTYPE.md)。
+
 在本目录使用 Python 3.12：
 
 ~~~powershell
