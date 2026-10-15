@@ -1,0 +1,10 @@
+{
+  "scope": "pure_M1Policy_decide_in_process_no_mcp_no_model",
+  "samples": 5000,
+  "policy_snapshot_hash": "sha256:72b405a8b4851d3518995d77149c2526e756e66cf288f65f01829a61d478ba4a",
+  "python": "3.12.2",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "p50_ms": 0.0547,
+  "p95_ms": 0.08243,
+  "p99_ms": 0.164311
+}

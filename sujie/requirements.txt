@@ -5,3 +5,4 @@ PyYAML==6.0.2
 mcp==2.1.1
 langgraph==1.2.11
 fastapi==0.141.1
+tokenizers==0.22.2

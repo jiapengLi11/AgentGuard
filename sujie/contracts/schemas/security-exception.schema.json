@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sujie.invalid/contracts/0.1/security-exception.schema.json",
+  "$id": "https://sujie.invalid/contracts/0.2/security-exception.schema.json",
   "title": "security-exception",
   "type": "object",
   "additionalProperties": false,

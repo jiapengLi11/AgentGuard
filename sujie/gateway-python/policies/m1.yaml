@@ -1,5 +1,11 @@
 schema_version: "0.1"
 rules:
+  - id: hard_block_unregistered_memory_change
+    effect: hard_block
+    when:
+      - field: action.effect.operation
+        op: in
+        value: [MEMORY_REJECT_KEY, MEMORY_REJECT_VERSION, MEMORY_REJECT_CONTENT]
   - id: allow_bounded_m1_action
     effect: allow
     when:
@@ -18,3 +24,30 @@ rules:
       - field: action.effect.destination_trust
         op: in
         value: [UNTRUSTED_EXTERNAL]
+  - id: hard_block_unapproved_process
+    effect: hard_block
+    when:
+      - field: action.effect.kind
+        op: eq
+        value: exec
+      - field: action.effect.operation
+        op: in
+        value: [EXEC_REJECT_ENCODED, EXEC_REJECT_INLINE, EXEC_REJECT_DOWNLOAD, EXEC_REJECT_SHELL_SYNTAX, EXEC_REJECT_PROGRAM, EXEC_REJECT_ARGV, EXEC_REJECT_RESOURCE]
+  - id: ask_pinned_git_delivery
+    effect: ask
+    when:
+      - field: action.effect.kind
+        op: eq
+        value: git.push
+      - field: action.effect.operation
+        op: eq
+        value: PINNED_LOCAL_GIT_PUSH
+  - id: hard_block_unregistered_git_target
+    effect: hard_block
+    when:
+      - field: action.effect.kind
+        op: eq
+        value: git.push
+      - field: action.effect.operation
+        op: in
+        value: [GIT_REJECT_REMOTE, GIT_REJECT_REF, GIT_REJECT_COMMIT, GIT_REJECT_OLD, GIT_REJECT_STATE]

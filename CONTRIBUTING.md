@@ -1,53 +1,27 @@
-# 参与开发
+# 参与开发与交接约定
 
-感谢参与溯界。当前协作主线位于 `sujie/`，根目录的 `agentguard/` 是历史 v0.1 原型，除非 Issue 明确要求，否则不要在旧版上增加比赛功能。
+更新：2026-10-15。当前主线是 `sujie/`，根目录 `agentguard/` 是历史原型。
+先读[交接手册](sujie/docs/PROJECT_HANDOFF.md)、[当前状态](sujie/docs/F2_IMPLEMENTATION_STATUS.md)和[文档索引](sujie/docs/DOCUMENT_INDEX.md)。四业务完成后已按用户要求停止；接手不自动恢复全部旧计划。本轮只更新文档。
 
-## 开始之前
+## 开发与验证
 
-1. 阅读 `competition/docs/SUJIE_FINAL_DESIGN.md`，确认需求属于哪个里程碑。
-2. 从 Issue 领取一个边界清晰的任务，写明测试 ID、输入、预期决策和真实副作用 Oracle。
-3. 从 `main` 创建短分支：`feat/<topic>`、`fix/<topic>`、`test/<topic>` 或 `docs/<topic>`。
-4. 不提交真实凭据、真实业务数据、模型缓存、离线 wheel、镜像 tar 或个人环境文件。
+- 本轮共同开发起点为 `integration/teammate-m21`；从该分支建立个人 `feat/`、`fix/` 或 `docs/` 分支，PR 暂以集成分支为目标。集成验收后再恢复以 `main` 为起点。参见[集成交接](docs/INTEGRATION_M21.md)。
 
-## 本地验证
+- 在 `sujie/` 使用Python3.12；按 `requirements.lock` 创建独立环境；前端按 `package-lock.json` 安装。完整命令见交接手册。
+- Python修改运行 `python dev.py check`；针对改动补有意义的正常/拒绝/实际副作用检查。前端修改运行 `npm run build`，交互变更还需相应实际界面验证。
+- 隔离/网络边界变更需在目标Linux环境验收相应拓扑。旧 `sh deploy/run_m1_container_test.sh` 只验M1；当前新版整体拓扑尚未验收，缺环境时如实记录。
+- 不覆盖用户改动、运行任务、旧报告、预算账本或冻结协议。原交付是无 Git 历史的源码快照，现已导入现有仓库；以当前 Git 状态和远端分支为准。
 
-项目要求 Python 3.12：
+## 安全与证据纪律
 
-```powershell
-cd sujie
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.lock
-.\.venv\Scripts\python.exe dev.py check
-.\.venv\Scripts\python.exe dev.py demo
-```
+模型、检测器、前端、外部正文和子Agent输出不能授权。新增工具必须有语义效果、任务/资源/来源边界和独立可观察副作用；新增依赖记录固定版本、用途、许可证和热路径。
 
-Linux/macOS 使用 `.venv/bin/python`。修改 Compose 或隔离边界时，还需在 Linux + Docker 环境运行：
+M9四冻结实现与原协议摘要见手册；后续算法另建版本，不改旧分母或已暴露留出。结果包含配置、代码/数据/模型版本、分母、失败/超时/无动作/UNKNOWN、业务完成与实际泄露；新输出使用新目录，严禁只保留成功。版本不一致不能合并成功率。共有执行器/Provider/预算基础设施不算Full独有收益。
 
-```bash
-cd sujie
-docker compose -f deploy/m1.compose.yaml config --quiet
-sh deploy/run_m1_container_test.sh
-```
+不提交API CSV、操作者token、真实业务数据、个人环境、模型缓存、离线wheel或镜像。原始报告多被忽略，正式移交需选择脱敏证据与源码归档单独打包，并检查许可；不要因忽略规则误以为已经纳入源码包。
 
-## Pull Request 要求
+## 变更说明
 
-- PR 只解决一个主题，并关联 Issue。
-- 说明修改的信任边界、失败模式和未覆盖项。
-- 新依赖必须记录用途、固定版本、许可证、替代方案以及是否进入安全热路径。
-- 新安全能力必须包含正常对照、攻击用例和可观测的副作用 Oracle，不能只断言模型文本输出。
-- 修改 Schema、DSL 或授权逻辑时必须补充拒绝路径测试。
-- 不得用 Mock、确定性模型或自动化测试数量冒充真实 LLM 指标。
+PR/交接应写明做了什么、原因、实际验证、未覆盖项及证据版本。授权/Schema/策略、可信计算基、凭据/网络权限或来源语义变化需记录设计判断/ADR；用户当前授权优先，不把旧总指令当成重新申请许可或自动执行依据。
 
-## 指标口径
-
-提交评测结果时至少给出：配置名称、模型与版本、数据集版本、样本分母、随机参数、失败/超时处理、Execution ASR、敏感数据泄露率、正常任务成功率与 P95 延迟。结果文件应可由脚本重新生成，不手工改数字。
-
-## 需要先讨论的变化
-
-以下变化先开 Design Issue 或 ADR，再写代码：
-
-- 改变 `LLM Decision != Authorization` 主原则；
-- 新增或扩大可信计算基；
-- 允许 Agent 直接获得工具凭据、文件系统或网络权限；
-- 修改 `TaskContract`、`TaskGrant`、`ProvenanceEnvelope` 或决策优先级；
-- 引入新的模型服务、数据库、中间件或外部网络依赖。
+每次更新同步：根README、`sujie/README.md`、简明汇总、交接手册、当前状态、能力矩阵及相应阶段记录。历史实验保留原结果，追加后续版本说明。

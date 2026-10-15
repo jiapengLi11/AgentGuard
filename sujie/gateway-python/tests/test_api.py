@@ -27,6 +27,7 @@ def test_M1_API_001_agent_only_gets_call_and_sanitized_trace(tmp_path, monkeypat
             )
             assert blocked.json()["decision"] == "BLOCK"
             assert client.post("/v1/approvals/not-exposed").status_code == 404
+            assert client.post("/v1/host-content").status_code == 404
             trace = client.get("/v1/trace").json()["events"]
             for event in trace:
                 TraceEvent(event)

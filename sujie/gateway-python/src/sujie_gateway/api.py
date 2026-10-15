@@ -14,7 +14,7 @@ from mcp import StdioServerParameters
 from pydantic import BaseModel, ConfigDict, JsonValue
 
 from .contracts import TaskContract, TaskGrant
-from .m1_runtime import M1Gateway, StdioMCPProxy, new_id
+from .m1_runtime import LOCAL_TOOL_CATALOG, M1Gateway, M1Policy, StdioMCPProxy, new_id
 
 ROOT = Path(__file__).resolve().parents[3]
 HONEYTOKEN = "SYNTHETIC-HONEYTOKEN-M1-CONTAINER"
@@ -27,6 +27,7 @@ class ToolCallRequest(BaseModel):
         "evidence.read_alert",
         "operations.read_file",
         "operations.write_file",
+        "operations.exec_hash_report",
         "operations.send_data",
     ]
     arguments: dict[str, JsonValue]
@@ -50,13 +51,13 @@ def _records() -> tuple[TaskContract, TaskGrant]:
             ],
             "forbidden_effects": [
                 "credential.read",
-                "external.data_transfer",
+                "data.transfer",
                 "git.push",
             ],
             "budgets": {"tool_calls": 20, "network_calls": 0, "subagents": 0},
             "expires_at": "2099-01-01T00:00:00Z",
             "parent_contract_id": None,
-            "policy_snapshot_hash": "sha256:" + "a" * 64,
+            "policy_snapshot_hash": M1Policy().snapshot_hash,
             "status": "ACTIVE",
         }
     )
@@ -109,7 +110,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         ),
     }
     contract, grant = _records()
-    async with StdioMCPProxy(params) as proxy:
+    async with StdioMCPProxy(
+        params, expected_tools={alias: LOCAL_TOOL_CATALOG[alias] for alias in params}
+    ) as proxy:
         app.state.gateway = M1Gateway(proxy, contract, grant)
         app.state.workspace = workspace
         yield

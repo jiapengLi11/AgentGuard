@@ -1,0 +1,960 @@
+{
+  "kind": "agentdojo-v1-static-task-inventory",
+  "upstream_repository": "https://github.com/ethz-spylab/agentdojo",
+  "upstream_docs": "https://agentdojo.spylab.ai/concepts/task_suite_and_tasks/",
+  "scope": "AST inventory of base v1 task classes only; no upstream import, execution, classification, task completion or ASR. Later version overrides are not enumerated.",
+  "source_sha256": {
+    "default_suites/v1/banking/user_tasks.py": "37af838194f001af80cc040315bcb2d69d0112324d424f9a323473b41b317f82",
+    "default_suites/v1/slack/user_tasks.py": "25e43a0c58109765da090aa2f01bfb0892aaee70ca1622028074d7b49443a57b",
+    "default_suites/v1/travel/user_tasks.py": "757f0e28208f92c2082e016469654524cb1120ec10928ce229da15fe32f6d3ee",
+    "default_suites/v1/workspace/user_tasks.py": "d2a550b812b7f40ee2dea17ac19d44f2dd063d103524118216b563eca6e44171"
+  },
+  "summary": {
+    "base_task_classes": 86,
+    "by_suite": {
+      "banking": 16,
+      "slack": 17,
+      "travel": 20,
+      "workspace": 33
+    }
+  },
+  "rows": [
+    {
+      "suite": "banking",
+      "task_class": "UserTask0",
+      "prompt_source_sha256": "26d34a779c1d48939c56f49e0f5cd16f52644d06fd40df0119c458be8982ebe7",
+      "ground_truth_tool_names": [
+        "read_file",
+        "send_money"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask1",
+      "prompt_source_sha256": "3d410a1a6a98cea5a12c0021b996c0768cf4de257de4f2a068955960b9c10d77",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask2",
+      "prompt_source_sha256": "11e32dd2518da25890b001c71f6c5035556f7f2f48bbfd38a6ad195c2a0e8f2c",
+      "ground_truth_tool_names": [
+        "get_scheduled_transactions",
+        "read_file",
+        "update_scheduled_transaction"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask3",
+      "prompt_source_sha256": "e3f7a92705140b878398ff0e6f94873cea1cfe54e76c46ee73f20fb666fdbd1b",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "send_money"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask4",
+      "prompt_source_sha256": "36af9e504bbf84e2dc5238802097cd66e09ed893d5d550b2307fd26071cbf98e",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "send_money"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask5",
+      "prompt_source_sha256": "5068e51edad7695a3f0f856319d14e63b5254a9f0fc4798d865b85f7059d2da9",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "send_money"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask6",
+      "prompt_source_sha256": "e07c6028f87462089a266314a251f2fb8c6b88ec7da55c46e5014d0aa01fa133",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "schedule_transaction"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask7",
+      "prompt_source_sha256": "775c9764426d47efba88227707f1b7ecd59093d11a93599c382fbe2c5ccb212b",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask8",
+      "prompt_source_sha256": "694a73b6b350e962dd37df4e27575ea41390d884882469ff2dee9ca01186124d",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask9",
+      "prompt_source_sha256": "d94a866d04d1238c1fef3002f7961e4ca7f619d2565d2e41bbba9441a5e0f762",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "update_scheduled_transaction"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask10",
+      "prompt_source_sha256": "fb0d4d4bb7ff2d5eed580a16c880e61d87ad612a1b47949e3e24e19a82c78ded",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask11",
+      "prompt_source_sha256": "ad72a68116b754aae70f91426d4d73e9b0aed7bde1071559f61f378f241948da",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "send_money"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask12",
+      "prompt_source_sha256": "28bca3193d2d636aff9ae02f91b16125551121dd50c1b547cb7bc07672af9fd8",
+      "ground_truth_tool_names": [
+        "get_scheduled_transactions",
+        "read_file",
+        "update_scheduled_transaction"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask13",
+      "prompt_source_sha256": "5c6212a75d7454445ca0a57818271769d2289dcaf452c8fe600240e574d8aeb7",
+      "ground_truth_tool_names": [
+        "read_file",
+        "update_user_info"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask14",
+      "prompt_source_sha256": "767e8c65bcc946f0f753222880498bf2ee17f53d0190b87bafb5efb0b00f2604",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "update_password"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "banking",
+      "task_class": "UserTask15",
+      "prompt_source_sha256": "97aa3adc39c887b6917a3d50ad430fd721210a39037373df4e3d5b09dc530613",
+      "ground_truth_tool_names": [
+        "get_most_recent_transactions",
+        "get_scheduled_transactions",
+        "send_money",
+        "update_scheduled_transaction",
+        "update_user_info"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask0",
+      "prompt_source_sha256": "203479d3530bd999fc3f9aef24760e4d881256113fe78052fbaea77a24acb1a1",
+      "ground_truth_tool_names": [
+        "get_webpage"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask1",
+      "prompt_source_sha256": "5991c5b7d916da30a81b5fba5e0695ab7aa57d57307a1d3fcfb6b4ad4db44a72",
+      "ground_truth_tool_names": [
+        "get_webpage",
+        "read_channel_messages",
+        "send_direct_message"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask2",
+      "prompt_source_sha256": "9d3a77839c80e7b1e42a3dc2b38395181a4a21d7722b6fa3643cde765d054ff1",
+      "ground_truth_tool_names": [
+        "get_webpage",
+        "invite_user_to_slack"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask3",
+      "prompt_source_sha256": "cfc295b81d9b83482d7d884539546d3765fe7116aa63c191eb815d8cd338b2b1",
+      "ground_truth_tool_names": [
+        "get_webpage",
+        "send_channel_message"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask4",
+      "prompt_source_sha256": "f16f89f4aa97b29fa2a22e4f52243fac448192992055a834a75855bc7c72cc1a",
+      "ground_truth_tool_names": [
+        "get_webpage",
+        "post_webpage",
+        "read_inbox"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask5",
+      "prompt_source_sha256": "04d421d8618466d271943f3dc6a0533b14ec1387e1b59e4aed5a58bb69548c65",
+      "ground_truth_tool_names": [
+        "get_channels",
+        "get_users_in_channel",
+        "send_channel_message"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask6",
+      "prompt_source_sha256": "440a3d07814708ea48ec0ce8ad0b429cd73b2908fbb3a0cbac5fb412ac9c84d7",
+      "ground_truth_tool_names": [
+        "get_webpage",
+        "read_channel_messages",
+        "send_direct_message"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask7",
+      "prompt_source_sha256": "6136326412e918a4466d8b64f3213e562ee1f13ae8718f07e9907d8ac8750d31",
+      "ground_truth_tool_names": [
+        "add_user_to_channel",
+        "get_channels"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask8",
+      "prompt_source_sha256": "a25773a4bf4b620f99c413252b584b0e3bfc2fd01c98e76e3306f04736f3ad04",
+      "ground_truth_tool_names": [
+        "get_channels",
+        "read_channel_messages",
+        "send_channel_message"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask9",
+      "prompt_source_sha256": "acf1c3af8004b2f7989a23d8939e38d2e88f405d41a9fb8360a04d94ddc43309",
+      "ground_truth_tool_names": [
+        "add_user_to_channel",
+        "get_channels",
+        "get_users_in_channel"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask10",
+      "prompt_source_sha256": "175472c97b0a7bf0fafa2c7ac894fbb2349cdbb5d2f5fb0c329bf2fe6f227dd4",
+      "ground_truth_tool_names": [
+        "add_user_to_channel",
+        "get_channels",
+        "get_users_in_channel"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask11",
+      "prompt_source_sha256": "72bc58d2fbefebbfc61cf804e89eb01e1200096ba153d0f8669470191ceb122e",
+      "ground_truth_tool_names": [
+        "add_user_to_channel",
+        "get_webpage",
+        "invite_user_to_slack",
+        "read_inbox"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask12",
+      "prompt_source_sha256": "c581bbddb4b00ced7f54424b1b105792f705b78d89b23a966c3239f462a354e5",
+      "ground_truth_tool_names": [
+        "get_channels",
+        "send_channel_message"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask13",
+      "prompt_source_sha256": "0dc4171cbfb101f17124c0b9b79bf19733f71e09f2df6103785f62da26344f54",
+      "ground_truth_tool_names": [
+        "get_channels",
+        "read_channel_messages",
+        "send_direct_message"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask14",
+      "prompt_source_sha256": "67af2d50c327def66fee910f1439811dd34f565e7776a48b701fa5bed9c77054",
+      "ground_truth_tool_names": [
+        "get_channels",
+        "read_channel_messages",
+        "send_direct_message"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask15",
+      "prompt_source_sha256": "3bf784bdc46416e24a8848b4e7a3e4f55dc98dee7f6958fed8ccb544fe113782",
+      "ground_truth_tool_names": [
+        "get_webpage",
+        "read_channel_messages",
+        "send_channel_message"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "slack",
+      "task_class": "UserTask16",
+      "prompt_source_sha256": "9e86a2eeefb688e3ebcbc9c5551619bdc2216480f948df66b6c06b41094899f1",
+      "ground_truth_tool_names": [
+        "get_webpage",
+        "invite_user_to_slack",
+        "send_direct_message"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask0",
+      "prompt_source_sha256": "ccd2a2c19e2cef9004159329dcd4d705235a8da8f4590efc5ed881406ab1f1a2",
+      "ground_truth_tool_names": [
+        "get_rating_reviews_for_hotels",
+        "reserve_hotel"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask1",
+      "prompt_source_sha256": "854afc0c6d9ab3287c85f3a6e0ffae32f7eaf9e6ab471f648384c8c36d9a7615",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_hotels_address",
+        "get_hotels_prices",
+        "get_rating_reviews_for_hotels"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask2",
+      "prompt_source_sha256": "052c8609eed6e20dfbad3d278f3eaea2d42ddb7630ce2e7f5abfd2d5a087e34e",
+      "ground_truth_tool_names": [
+        "get_all_restaurants_in_city",
+        "get_cuisine_type_for_restaurants",
+        "get_price_for_restaurants",
+        "get_rating_reviews_for_restaurants"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask3",
+      "prompt_source_sha256": "7305e2615cac1c7cd1a60b728a5738953e0b84dee9c194f4d00a5bb5ffc2d070",
+      "ground_truth_tool_names": [
+        "get_all_hotels_in_city",
+        "get_hotels_address",
+        "get_hotels_prices",
+        "get_rating_reviews_for_hotels",
+        "send_email"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask4",
+      "prompt_source_sha256": "eff6d380990db22856a3c46b79bdd4308859027bec54802ada0956acffd40df1",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_all_hotels_in_city",
+        "get_hotels_address",
+        "get_hotels_prices",
+        "get_rating_reviews_for_hotels"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask5",
+      "prompt_source_sha256": "6a62a7548aa1f8015588f94726e0f02abb13ab9d2b7ffc253101855028e8a980",
+      "ground_truth_tool_names": [
+        "get_all_hotels_in_city",
+        "get_hotels_address",
+        "get_hotels_prices",
+        "get_rating_reviews_for_hotels"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask6",
+      "prompt_source_sha256": "274243365d9d69c0dae8eea05783eded2a9291bf6cf6c27a8a49ff3573b52c00",
+      "ground_truth_tool_names": [
+        "get_all_hotels_in_city",
+        "get_hotels_prices",
+        "get_rating_reviews_for_hotels"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask7",
+      "prompt_source_sha256": "9c68d693fa147a374e8eb9512a3dfc5a2b90133123ffb086e984a4251586e916",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_all_restaurants_in_city",
+        "get_cuisine_type_for_restaurants",
+        "get_rating_reviews_for_restaurants",
+        "get_restaurants_address"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask8",
+      "prompt_source_sha256": "746f30cbe2802b8eca3113a843ee11167ac3ec77735037f03153e528790637eb",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_all_restaurants_in_city",
+        "get_dietary_restrictions_for_all_restaurants",
+        "get_price_for_restaurants",
+        "get_rating_reviews_for_restaurants",
+        "get_restaurants_address"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask9",
+      "prompt_source_sha256": "45cc7ebe511b995773d0e771332f1f9433c43a99903f06277e5b8fa2998d4863",
+      "ground_truth_tool_names": [
+        "check_restaurant_opening_hours",
+        "get_all_restaurants_in_city",
+        "get_cuisine_type_for_restaurants",
+        "get_rating_reviews_for_restaurants",
+        "get_restaurants_address"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask10",
+      "prompt_source_sha256": "e06651aaac973ce4623ebe8126ee6063df3f32c1234149724937bb8fd3fd7757",
+      "ground_truth_tool_names": [
+        "check_restaurant_opening_hours",
+        "get_all_restaurants_in_city",
+        "get_cuisine_type_for_restaurants",
+        "get_price_for_restaurants",
+        "get_rating_reviews_for_restaurants",
+        "get_restaurants_address"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask11",
+      "prompt_source_sha256": "6940d3449629e1f9a9e74f4f7fb2b1332dd1467bb56719a6c215bd364f979c33",
+      "ground_truth_tool_names": [
+        "check_restaurant_opening_hours",
+        "get_all_hotels_in_city",
+        "get_all_restaurants_in_city",
+        "get_cuisine_type_for_restaurants",
+        "get_hotels_prices",
+        "get_price_for_restaurants",
+        "get_rating_reviews_for_hotels",
+        "get_rating_reviews_for_restaurants",
+        "get_restaurants_address"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask12",
+      "prompt_source_sha256": "9ebf2f73473b0e304511895f6dac5f69e57c856c8760a2bc3d37b2938a1b0b64",
+      "ground_truth_tool_names": [
+        "get_all_hotels_in_city",
+        "get_all_restaurants_in_city",
+        "get_cuisine_type_for_restaurants",
+        "get_hotels_address",
+        "get_hotels_prices",
+        "get_rating_reviews_for_hotels",
+        "get_rating_reviews_for_restaurants",
+        "get_restaurants_address"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask13",
+      "prompt_source_sha256": "2a931e1e051d4e788acf11524f0a72bbfaead82a6c3b2489483d8504c54b8db1",
+      "ground_truth_tool_names": [
+        "get_all_car_rental_companies_in_city",
+        "get_car_types_available",
+        "get_rating_reviews_for_car_rental"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask14",
+      "prompt_source_sha256": "eaa864cd239938fcaf99f5649ae845f2e516d8dac069a60947827f56b941f097",
+      "ground_truth_tool_names": [
+        "get_all_car_rental_companies_in_city",
+        "get_car_fuel_options",
+        "get_car_price_per_day",
+        "get_rating_reviews_for_car_rental"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask15",
+      "prompt_source_sha256": "c50af822805c8832394a0421571de1d106e11bd09bbecdf24b868dc9c9fee9a5",
+      "ground_truth_tool_names": [
+        "get_all_car_rental_companies_in_city",
+        "get_car_fuel_options",
+        "get_car_price_per_day",
+        "get_car_types_available",
+        "get_rating_reviews_for_car_rental"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask16",
+      "prompt_source_sha256": "7eb96b5e6223095567c686024adab105d63ba24254f537edff6db7930c34ce0a",
+      "ground_truth_tool_names": [
+        "get_all_car_rental_companies_in_city",
+        "get_car_price_per_day",
+        "get_flight_information",
+        "get_rating_reviews_for_car_rental"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask17",
+      "prompt_source_sha256": "48680ec7f71a080f52dfb5778a7add31523da8e785d3a7157930cbd889f9696a",
+      "ground_truth_tool_names": [
+        "get_all_car_rental_companies_in_city",
+        "get_all_hotels_in_city",
+        "get_all_restaurants_in_city",
+        "get_car_price_per_day",
+        "get_hotels_prices",
+        "get_price_for_restaurants",
+        "get_rating_reviews_for_car_rental",
+        "get_rating_reviews_for_hotels",
+        "get_rating_reviews_for_restaurants"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask18",
+      "prompt_source_sha256": "b9faf89fea564f024479d40e957c04e781826cd8b9c7869b18a4ad57398d274d",
+      "ground_truth_tool_names": [
+        "check_restaurant_opening_hours",
+        "get_all_car_rental_companies_in_city",
+        "get_all_restaurants_in_city",
+        "get_car_price_per_day",
+        "get_cuisine_type_for_restaurants",
+        "get_price_for_restaurants",
+        "get_rating_reviews_for_car_rental",
+        "get_rating_reviews_for_restaurants"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "travel",
+      "task_class": "UserTask19",
+      "prompt_source_sha256": "c477923b67b2422a18ee5ea9b4735ef848e13a601e581736a5d2ba70df231bdc",
+      "ground_truth_tool_names": [
+        "get_all_car_rental_companies_in_city",
+        "get_all_hotels_in_city",
+        "get_all_restaurants_in_city",
+        "get_car_price_per_day",
+        "get_hotels_prices",
+        "get_price_for_restaurants",
+        "get_rating_reviews_for_car_rental",
+        "get_rating_reviews_for_hotels",
+        "get_rating_reviews_for_restaurants"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask0",
+      "prompt_source_sha256": "7301f765538c63bc82f3ab72665d7c4ad43b43b09e3f8bf417f91a0fbf9943ca",
+      "ground_truth_tool_names": [
+        "search_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask1",
+      "prompt_source_sha256": "fd50bb3bd4db86fe8b21ee027352b5152180bc46bccfcd46e91d092bebdc4559",
+      "ground_truth_tool_names": [
+        "get_day_calendar_events"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask3",
+      "prompt_source_sha256": "dc3baba5c1335df3fb5c6f13629add608ff3f08a4aae5626cfa81d1ebe4da60a",
+      "ground_truth_tool_names": [
+        "search_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask2",
+      "prompt_source_sha256": "dad3c1619455b0b9e892550ddb0528bbb3b73b302d5582a8237e13a60ac35458",
+      "ground_truth_tool_names": [
+        "get_current_day",
+        "search_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask5",
+      "prompt_source_sha256": "d5d513a4e799995bf48af1077651f63e2a0b182d77a7b3859cf018b99eb6ea7c",
+      "ground_truth_tool_names": [
+        "get_day_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask6",
+      "prompt_source_sha256": "59e90468d9ebf2247febc95e95a95d57b471d1e4f62b77ea8399c0edf5beca58",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_day_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask7",
+      "prompt_source_sha256": "5c42e21014ad5b2683e7c348341095d4225c6fa66d268b9e90ceb28c6310de6c",
+      "ground_truth_tool_names": [
+        "reschedule_calendar_event",
+        "search_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask8",
+      "prompt_source_sha256": "bc9b6a281dd6c9f2433c3be3e523b991034f8890dcb9678498aec7c4ae8782e1",
+      "ground_truth_tool_names": [
+        "add_calendar_event_participants",
+        "search_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask9",
+      "prompt_source_sha256": "e95d4698d68a16183281cee74337e95f58e73b64991218d92b6b2882b9fba28a",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "search_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask10",
+      "prompt_source_sha256": "bb536497ab81b6a6399b80063856a3b7a2ad97c0985aaf88bb4277c6b7f312a4",
+      "ground_truth_tool_names": [
+        "get_current_day",
+        "get_day_calendar_events"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask11",
+      "prompt_source_sha256": "c8c323e1094ea1c13738ff7304bf775292fbd243cbe9348031f6b24ad56c9e37",
+      "ground_truth_tool_names": [
+        "get_day_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask12",
+      "prompt_source_sha256": "0323d1cb44edbf9f5f5ef0a421fd34f305ec4397aa431024d16da8186f7141fa",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_day_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask21",
+      "prompt_source_sha256": "234e94657684fe6f552bf6739070c07bc23ce1f27f75c7584e39d5e40998c2db",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_day_calendar_events",
+        "search_calendar_events"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask14",
+      "prompt_source_sha256": "c17daed94ac30a23339858bd66ae7d5fe5e718122fb0c3cc6c92ff52617097eb",
+      "ground_truth_tool_names": [
+        "search_emails"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask16",
+      "prompt_source_sha256": "953ca5c95b8dc98b37bc3ec75f62109e30c43a9dd870a020aa12b2cd839b315d",
+      "ground_truth_tool_names": [
+        "search_emails"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask17",
+      "prompt_source_sha256": "859042f352694192b591eb46ca795dd9745eac699931d5950f6d2ad2ed6dac2c",
+      "ground_truth_tool_names": [
+        "search_emails"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask22",
+      "prompt_source_sha256": "acaa2c155f61996bdb686daef604068c6b261d1cfa9e8e1826e0a7e5d2bb18e8",
+      "ground_truth_tool_names": [
+        "search_emails"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask24",
+      "prompt_source_sha256": "85370be254b20c4085c87a63ac9d3bffe9d16916ee20688bab6abe94d9d6ea64",
+      "ground_truth_tool_names": [
+        "get_unread_emails"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask26",
+      "prompt_source_sha256": "1bc62e848feb4664c0380379c7ba47ae56569cf03db480e9d62eb00bd5144e97",
+      "ground_truth_tool_names": [
+        "list_files"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask27",
+      "prompt_source_sha256": "f0c9a885bb2e8a842f3abcce1f83c92aff97edd9d0656be7b2dedc5fd1524687",
+      "ground_truth_tool_names": [
+        "list_files"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask28",
+      "prompt_source_sha256": "0c083c690577a7c40f887d7f95eb4c8c4731e5c7c149fbe4480b24b80bb00cca",
+      "ground_truth_tool_names": [
+        "search_files_by_filename"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask35",
+      "prompt_source_sha256": "a857de8e68bdcf0d0b55f2ce57b2f1458e554a57a2459b9d2864ab990292eca7",
+      "ground_truth_tool_names": [
+        "delete_file",
+        "list_files"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask29",
+      "prompt_source_sha256": "a155bb186d7588c1731e7433430b0928f99a72ca8951971ef5acf1bce5531688",
+      "ground_truth_tool_names": [
+        "append_to_file",
+        "search_files_by_filename"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask30",
+      "prompt_source_sha256": "cff5207ae1cc601327485cf14206c2681a51f364ce9d7262ad9e81a00a782e04",
+      "ground_truth_tool_names": [
+        "search_files"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask31",
+      "prompt_source_sha256": "55e52a906212d81e28fa8eab09067afb51ca9fd410fb54fe3b469ec0bfe1e594",
+      "ground_truth_tool_names": [
+        "create_file",
+        "search_files"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask32",
+      "prompt_source_sha256": "3d757af9b859dbd921968905c4404a1edec267c8cb24dd5faeef080c5215d552",
+      "ground_truth_tool_names": [
+        "create_file",
+        "search_files",
+        "share_file"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask15",
+      "prompt_source_sha256": "addc788281f90b810647c326d7ba3353d6ac7059e18b784f372d2afa2288fd6a",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "search_emails"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask18",
+      "prompt_source_sha256": "17913bbbd6eaaedc7b968f33add9be98b7c19f53430807af6a41822ec8de0177",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "search_emails"
+      ],
+      "prompt_is_literal": true
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask34",
+      "prompt_source_sha256": "5d9a3cce466a3a66902b441e63da7fca00b5ae23dfcc771fc76725f6b410cc64",
+      "ground_truth_tool_names": [
+        "append_to_file",
+        "search_files",
+        "search_files_by_filename"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask20",
+      "prompt_source_sha256": "d96c360fb86b431f5db21a2c9faead6a8d01236ba3d446bb0308384d72d1892b",
+      "ground_truth_tool_names": [
+        "create_calendar_event",
+        "get_day_calendar_events",
+        "search_contacts_by_name"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask33",
+      "prompt_source_sha256": "dc8273e709e676c78413cc6bb2520e39419a90e868f64f58ac8a9bbcd10297cb",
+      "ground_truth_tool_names": [
+        "search_files_by_filename",
+        "send_email"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask25",
+      "prompt_source_sha256": "b9c11a6194cb82d99a98e561147f253695268eeb3ebe0879fac98b7d9bac5429",
+      "ground_truth_tool_names": [
+        "search_files",
+        "send_email"
+      ],
+      "prompt_is_literal": false
+    },
+    {
+      "suite": "workspace",
+      "task_class": "UserTask13",
+      "prompt_source_sha256": "bc260d89e162c9df1a0239c60dccdbe8a1eff98c8bf35af9fd4065b5afe1e35e",
+      "ground_truth_tool_names": [
+        "append_to_file",
+        "search_emails",
+        "search_files_by_filename",
+        "send_email"
+      ],
+      "prompt_is_literal": false
+    }
+  ],
+  "package": "agentdojo",
+  "version": "0.1.35",
+  "artifact_sha256": "364bea4219716b716bf639f504d195943f7f6a5535d312ca41d7098704a2affd",
+  "artifact_hash_verification": "Caller-supplied acquisition metadata; independently verify the downloaded archive against this digest."
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sujie.invalid/contracts/0.1/semantic-action.schema.json",
+  "$id": "https://sujie.invalid/contracts/0.2/semantic-action.schema.json",
   "title": "semantic-action",
   "type": "object",
   "additionalProperties": false,

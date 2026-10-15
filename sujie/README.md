@@ -1,72 +1,59 @@
-# 溯界（Sujie）
+# 溯界比赛实现
 
-大模型智能体运行时安全网关平台。
-可信任务契约冻结权限，来源—用途信封约束传播，效果级闸门实施 ALLOW / ASK / BLOCK。
+更新：2026-10-15，代码截至M21及协议索引修正。当前运行/评测主线是本目录。
 
-唯一架构基线：[SUJIE_FINAL_DESIGN.md](../competition/docs/SUJIE_FINAL_DESIGN.md)。
-实施顺序：[CODEX_IMPLEMENTATION_INSTRUCTIONS.md](../competition/docs/CODEX_IMPLEMENTATION_INSTRUCTIONS.md)。
+## 交接入口
 
-## 当前完成状态
+- [已完成工作简明汇总](docs/COMPLETED_WORK_SUMMARY.md)
+- [项目交接手册](docs/PROJECT_HANDOFF.md)：安装、启动、预算、代码定位、证据和剩余工作
+- [文档索引](docs/DOCUMENT_INDEX.md)：当前指南与历史记录
+- [当前工作包](docs/F2_IMPLEMENTATION_STATUS.md) / [赛题证据矩阵](docs/TOPIC5_EVIDENCE_MATRIX.md)
 
-M0、M1 已验收。当前完成两个真实 stdio MCP Server、MCP Proxy、LangGraph
-工作流、file.read/file.write/data.transfer 效果映射、最小 DSL、三态决策、内存 Trace
-和封闭接收端 Oracle；ASK 已具备动作绑定、可信审批和进程内原子单次提交，本机确定性闭环已通过。
-并已在 Ubuntu VM 通过双内部网络的容器不可绕过验收。详见
-[M1 验收记录](docs/M1_ACCEPTANCE.md)与 [M1 进度记录](docs/M1_PROGRESS.md)。
+已完成契约/三态网关、真实MCP、来源传播、模型输入/出口保护、共享预算、IOC/Git自主审批、网络/进程/Git效果、多层Agent、两个Memory会话、字面引用核验及四类新业务，共13个开发profile。Python控制面与Vue已实现，Java/MySQL未实现。
 
-尚未运行真实 LLM，因此没有比赛 ASR 成绩。
-Spring Boot、Vue、来源传播及其他工具仍未实现。历史 AgentGuard 代码未复用为安全内核。
+**四类业务按用户要求完成后停止；F3整体未完成。本轮仅更新交接文档。**
+
+## 安装与本机启动
+
+在本目录，Python3.12、Node20.19+或22.12+，Git业务另需Git：
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.lock
+.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe dev.py prepare-tokenizer
+Push-Location console-vue
+npm ci
+npm run build
+Pop-Location
+.\.venv\Scripts\python.exe dev.py demo
+.\.venv\Scripts\python.exe dev.py console
+```
+
+Linux/macOS用 `.venv/bin/python`。默认地址 `http://127.0.0.1:8765`，凭据为本机 `.control-runtime/operator-token.txt`。无云凭据时使用固定动作/确定性演示；安装及首次固定分词器准备需要网络或核验离线资源，分词器不含模型权重。
+
+云模型/端口/预算参数用 `control-plane-python/run_console.py`，见[手册](docs/PROJECT_HANDOFF.md)。`dev.py console`不透传参数，`.env.example`不是实际Provider配置。旧8765进程未随代码自动更新，勿清理用户任务；先导出再协调重启或使用新端口。
 
 ## 模块
 
-| 目录 | 目标职责 | 当前状态 |
-|---|---|---|
-| contracts | 九类 JSON Schema、共享枚举、fixtures 和测试 | 已实现 |
-| gateway-python | Python 3.12 数据面 | M1 stdio 代理、效果映射、DSL、三态与 Trace |
-| control-plane-java | Java 21 / Spring Boot 3 / MySQL 8 控制面 | 占位 |
-| console-vue | Vue 3 / TypeScript 控制台 | 占位 |
-| demo-agent | LangGraph 受控 Agent | 可替换决策模型；确定性测试模型已验证 |
-| mcp-servers | Evidence、Operations 与恶意变体 | 两个真实 stdio Server；恶意变体待后续 |
-| sandbox | 隔离执行器、本地接收端和 Git 远端 | 真实本地接收端与容器 Oracle；Git 待后续 |
-| eval | 真实任务、攻击、Oracle、结果 | 两条确定性闭环 + 接收端校准；无 LLM 成绩 |
-| deploy | Compose 部署 | M1 四容器、双内部网络已在 Ubuntu VM 验收 |
+| 目录 | 职责 |
+|---|---|
+| `contracts/` | 九类Schema、包0.2/载荷1.0、fixtures与不变量 |
+| `gateway-python/` | MCP代理、合同/Grant、DSL、三态/审批、来源/Trace与序列 |
+| `demo-agent/` | 旧LangGraph演示、有界百炼Host、子角色、正文分析、模型保护与预算 |
+| `control-plane-python/` | 独立认证服务、13profile、临时环境及事实/读取/效果Oracle |
+| `console-vue/` | 同源操作者页面；前端不是授权来源 |
+| `mcp-servers/`、`sandbox/` | 文件、网络、执行、Git交付、版本Memory及旧测试服务/实际封闭副作用 |
+| `eval/` | 冻结协议、开发数据、五配置、校准、云实验和离线重算 |
+| `deploy/` | 历史M1拓扑及离线说明；新版整体隔离未验收 |
+| `control-plane-java/` | 未实现占位，不是启动依赖 |
 
-## 快速验证
+## 验证与边界
 
-在本目录使用 Python 3.12：
+`python dev.py check`执行ruff/格式检查和pytest；`demo`为非LLM确定性真实MCP演示。`schema / unit / test / lint / format`为开发入口，`format`会修改代码。评测/性能脚本会写输出，复现时选择新目录，不覆盖旧成绩。
 
-~~~powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.lock
-.\.venv\Scripts\python.exe dev.py check
-~~~
+M21脚本16/16业务完成；云首轮3/4、修复时间线单独完成，合计18请求/29,789tokens，跨版本不合并成功率。修复前完整479 passed/2 skipped/1 warning；修复后52专项通过，静态/格式及Vue构建通过。[M21记录](docs/M21_FOUR_BUSINESS_WORKFLOWS.md)保留版本边界，不能表述为修复后同版全量验收、正式ASR或排名。
 
-Linux/macOS 将解释器改为 .venv/bin/python。
-统一命令：dev.py schema / unit / test / lint / format / check。
-check 运行静态检查、格式检查、Schema 与 Python 单元测试。
+Host与执行器可信；子/孙对话同Host；任务/审批临时，预算账本持久不等于任务恢复；审批单次提交不等于跨崩溃exactly-once。本地token不是云内部token，来源Hash不是事实证明，字面引用核验不是语义核实。
 
-确定性真实协议演示：.\.venv\Scripts\python.exe dev.py demo。
-输出覆盖正常、间接注入和 ASK 审批单次提交，并明确标记
-deterministic-test-model-not-llm；独立 API、交互式界面和真实模型待完成。
-M1 容器验证：`sh deploy/run_m1_container_test.sh`。VM 无外网时按
-[部署说明](deploy/README.md)准备基础镜像和 wheelhouse；成功输出与证据见
-[M1 验收记录](docs/M1_ACCEPTANCE.md)。`deploy/compose.yaml` 仅保留为 M0 历史占位，
-不得用于证明隔离或安全闭环。
-
-## 契约和边界
-
-Schema 包版本为 0.1；载荷 schema_version 保留最终设计示例的 1.0。
-九类业务对象均有封闭字段、必填项、格式/枚举和合法/非法 fixture。
-格式断言显式启用；ULID / UUIDv7、UTC 日期、Hash 都会验证。
-见 [契约说明](contracts/README.md)、[M0 安全边界](docs/M0_SECURITY.md)。
-
-Schema 校验不等于认证、授权、可信签名或真实工具安全。
-当前容器闭环只证明 M1 定义的 Agent 隔离边界；可信审批入口尚未独立成控制面服务，
-Gateway 自身失陷、持久化幂等及来源传播仍不在该结论内。
-
-## 待确认事项
-
-[ADR-001](docs/adr/ADR-001-dsl-lt.md) 已按用户授权接受方案 B：DSL 使用 in，
-不为目的地等级引入隐含字符串顺序。
-
-依赖、许可证与替代方案见 [DEPENDENCIES.md](docs/DEPENDENCIES.md)。
+正式独立任务/C-A-Q-R五配置比较、全入口/有效请求绑定、覆盖矩阵、信息保全/恢复比较、新版Linux隔离性能和材料仍待完成。旧原型不参加主评测，历史M1容器/性能/分类/云报告按各自版本解释。接手需另存忽略的证据、源码归档及固定资源；凭据私下交接。

@@ -1,0 +1,24 @@
+{
+  "kind": "task-aware-development-comparison-v2",
+  "model": "qwen-plus-2025-12-01",
+  "max_tokens": 256,
+  "temperature": 0,
+  "model_tools": [],
+  "dataset_sha256": "1191aca08321161cd8f0fe6ea8b65a9ad87446bfbfafda9e417de7d18e525158",
+  "source_manifest_sha256": "4498aa40eab6137f42d3915c9c54458df4408778e085ed631edfb68a88b80ab8",
+  "prompt_sha256": {
+    "v1": "fd931736a7efdb65c5d249eaded6b09d6e8e01636b62aca216a6e65d68b313dc",
+    "v2": "efd918f8b69a310ab0bd68553cd4b0056b6d48630c6fd3af394a83beb4f6b5d6"
+  },
+  "implementation_sha256": {
+    "demo-agent/sujie_demo_agent/semantic_detector.py": "027097b2bbaa0ab96163d0f760dc86670a947b73f3602a045ce5d1f1a80d2b4f",
+    "demo-agent/sujie_demo_agent/semantic_detector_v2.py": "70ff195191ed5686a9bd2e0af9e0b6bcfeb37a59435d8d41007aa0a39e665231",
+    "demo-agent/sujie_demo_agent/bailian_agent.py": "ee73910a47201aa477d99f26014c0cd3e94657b077d116f594a634d0cbaeeaae",
+    "eval/run_task_aware_dev.py": "103148ad409a79e93a49675e50184125552bd3d06c219fbb90b9af4c16eab9c4",
+    "eval/build_task_aware_dev.py": "d51f42e6c2a05861acda8949eb305d86e0e103ee89cf0e9774b203593059c9c6",
+    "eval/benign_documents.py": "7f4bd4677eb37b8e1763734fe3df04c571069c16956a3c65f1bcdb4171504d6d"
+  },
+  "planned_requests": 180,
+  "order": "Dataset row order; v1/v2 order alternates by response SHA parity; one call per row per variant, no retries.",
+  "scope": "TRAIN development classification only; authored controls executed through real MCP; no field benign FPR, held-out generalization or Agent ASR."
+}

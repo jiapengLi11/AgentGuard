@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sujie.invalid/contracts/0.1/provenance-envelope.schema.json",
+  "$id": "https://sujie.invalid/contracts/0.2/provenance-envelope.schema.json",
   "title": "provenance-envelope",
   "type": "object",
   "additionalProperties": false,
@@ -167,6 +167,8 @@
         "ISSUE",
         "MCP_TOOL_DESCRIPTION",
         "MCP_TOOL_RESULT",
+        "MODEL_OUTPUT",
+        "SANITIZER_OUTPUT",
         "MEMORY",
         "SUBAGENT_OUTPUT",
         "CONTROL_PLANE"
@@ -225,7 +227,8 @@
         "MODEL_REWRITE",
         "SERIALIZE",
         "SUBAGENT_PASS",
-        "MEMORY_RESTORE"
+        "MEMORY_RESTORE",
+        "IOC_EXTRACTION"
       ]
     },
     "span": {

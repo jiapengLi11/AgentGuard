@@ -1,8 +1,13 @@
-# Schema 包 v0.1
+# Schema 包 v0.2
+
+> **2026-10-15 交接更新：** 当前仍是九类对象、契约包0.2/载荷schema_version=1.0。独立Python/FastAPI控制面已经实现，并复用契约校验；Java适配尚未实现。下文“M0不声称/后续里程碑”等为对象冻结时边界，不表示当前没有运行时工具摘要/审批/来源。Hash是本地一致性指纹，不是签名。
+> 完整现状、启动与证据限制见[交接手册](../docs/PROJECT_HANDOFF.md)。
 
 架构来源为 ../../competition/docs/SUJIE_FINAL_DESIGN.md，第 4—11 节。
 按实施总指令增加所有对象必填 schema_version；保留最终设计载荷示例的 "1.0"。
-v0.1 指本次契约包版本，不静默替换最终设计的载荷版本。
+v0.2 在F2中扩展上下文登记、模型请求/回应检查与出口阻断四种Trace事件。
+包版本不替换载荷版本1.0；旧事件仍有效，新事件需要v0.2枚举。
+变更记录见 [ADR-002](../docs/adr/ADR-002-context-audit.md)。
 ctr_... 等只是示例占位，真实 fixtures 使用 ULID；同样接受 UUIDv7。
 
 ## 九类业务对象
@@ -16,7 +21,7 @@ enums.json 检查跨 Schema 枚举一致性。manifest.json 固定 Schema 文本
 变更需审阅，不自动更新。
 
 M0 Python 模型是对 Schema 验证后 JSON 的不可变领域封装，不维护第二套字段定义。
-FastAPI/Pydantic HTTP 适配属于后续里程碑；不得绕开同一份 Schema 验证。
+当前 FastAPI/Pydantic HTTP 适配已在 Python 控制面接入；领域对象仍不得绕开同一份 Schema 验证。
 
 ## 补全规则
 

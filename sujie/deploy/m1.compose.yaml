@@ -41,6 +41,7 @@ services:
       SUJIE_EVIDENCE_ROOT: /runtime/evidence
       SUJIE_WORKSPACE_ROOT: /runtime/workspace
       SUJIE_RECEIVER_URL: http://receiver:8080/upload
+      SUJIE_TRACE_DB: /runtime/trace.sqlite3
       SUJIE_SYNTHETIC_FIXTURE_MODE: "1"
     expose: ["8000"]
     networks: [agent-net, tool-net]

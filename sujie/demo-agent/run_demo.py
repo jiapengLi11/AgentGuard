@@ -19,7 +19,13 @@ from mcp import StdioServerParameters  # noqa: E402
 from receiver import Receiver  # noqa: E402
 from sujie_demo_agent.graph import DeterministicDecisionModel, build_agent  # noqa: E402
 from sujie_gateway.contracts import TaskContract, TaskGrant  # noqa: E402
-from sujie_gateway.m1_runtime import M1Gateway, StdioMCPProxy, new_id  # noqa: E402
+from sujie_gateway.m1_runtime import (  # noqa: E402
+    LOCAL_TOOL_CATALOG,
+    M1Gateway,
+    M1Policy,
+    StdioMCPProxy,
+    new_id,
+)
 
 EVIDENCE_SERVER = ROOT / "mcp-servers/evidence-server/server.py"
 OPERATIONS_SERVER = ROOT / "mcp-servers/operations-server/server.py"
@@ -28,7 +34,7 @@ HONEYTOKEN = "SYNTHETIC-HONEYTOKEN-M1-DEMO"
 
 def records(*, allow_transfer: bool = False) -> tuple[TaskContract, TaskGrant]:
     contract_id, principal, session, subject = new_id(), new_id(), new_id(), new_id()
-    policy_hash = "sha256:" + "a" * 64
+    policy_hash = M1Policy().snapshot_hash
     contract_body = {
         "schema_version": "1.0",
         "contract_id": contract_id,
@@ -42,7 +48,7 @@ def records(*, allow_transfer: bool = False) -> tuple[TaskContract, TaskGrant]:
             {"kind": "file.read", "resource": "/workspace/case-001/**"},
             {"kind": "file.write", "resource": "/workspace/case-001/output/**"},
         ],
-        "forbidden_effects": ["credential.read", "external.data_transfer", "git.push"],
+        "forbidden_effects": ["credential.read", "data.transfer", "git.push"],
         "budgets": {"tool_calls": 20, "network_calls": 0, "subagents": 0},
         "expires_at": "2099-01-01T00:00:00Z",
         "parent_contract_id": None,
@@ -62,6 +68,9 @@ def records(*, allow_transfer: bool = False) -> tuple[TaskContract, TaskGrant]:
         "status": "ACTIVE",
     }
     if allow_transfer:
+        contract_body["forbidden_effects"].remove("data.transfer")
+        contract_body["allowed_purposes"].append("TRANSFER")
+        contract_body["budgets"]["network_calls"] = 2
         contract_body["allowed_effects"].append(
             {"kind": "data.transfer", "resource": "https://receiver.invalid/upload"}
         )
@@ -91,7 +100,9 @@ async def run_one(root: Path, alert_id: str, text: str) -> dict:
             ),
         }
         contract, grant = records()
-        async with StdioMCPProxy(params) as proxy:
+        async with StdioMCPProxy(
+            params, expected_tools={alias: LOCAL_TOOL_CATALOG[alias] for alias in params}
+        ) as proxy:
             gateway = M1Gateway(proxy, contract, grant)
             result = await build_agent(gateway, DeterministicDecisionModel()).ainvoke(
                 {"alert_id": alert_id}
@@ -125,7 +136,9 @@ async def run_ask(root: Path) -> dict:
             )
         }
         contract, grant = records(allow_transfer=True)
-        async with StdioMCPProxy(params) as proxy:
+        async with StdioMCPProxy(
+            params, expected_tools={alias: LOCAL_TOOL_CATALOG[alias] for alias in params}
+        ) as proxy:
             gateway = M1Gateway(proxy, contract, grant)
             asked = await gateway.call(
                 "operations.send_data",

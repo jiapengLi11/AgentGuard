@@ -218,7 +218,7 @@ def test_shared_enums_do_not_drift():
 
 def test_schema_bundle_freeze():
     manifest = json.loads((CONTRACTS / "manifest.json").read_text("utf-8"))
-    assert manifest["bundle_version"] == "0.1"
+    assert manifest["bundle_version"] == "0.2"
     assert set(manifest["schemas"]) == {f"{name}.schema.json" for name in SCHEMA_NAMES}
     for file, expected in manifest["schemas"].items():
         # Stable across Git CRLF/LF checkout settings.

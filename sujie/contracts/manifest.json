@@ -1,15 +1,15 @@
 {
-  "bundle_version": "0.1",
+  "bundle_version": "0.2",
   "payload_schema_version": "1.0",
   "schemas": {
-    "approval-record.schema.json": "e3902bcbddaf4093f15808ef81ae03a9e7b5f647359e4fcdc9fc2b5391e8c87c",
-    "decision-record.schema.json": "297a442b283b8cb784a2eff8d032c9744eb95bfc11c9dc649863cf938f059f2c",
-    "detection-finding.schema.json": "74f83d5dcc45e88155d95669a59279f04abe6311e10747599c30d653ecf524f0",
-    "provenance-envelope.schema.json": "dbeec660733cc6467863ebe9967c18b32fcc730d01f5fe8a5689104cbf5844d5",
-    "security-exception.schema.json": "02a8f513062815b959180d2259ed604a81836a8b11e0bd3bd4502343929b50dc",
-    "semantic-action.schema.json": "ec9f5965bb50776e80db1b5860461315677512f94a6cfa8899060ff40e2472f2",
-    "task-contract.schema.json": "56a25d429718e1fbef820c1d881eca4ea4d300bf47d150d7f9e2d35c5a28356e",
-    "task-grant.schema.json": "052cdb6dc5c5e7519da9e6862dbb0c60d02c2670ce6dd523fa39dd851f56843f",
-    "trace-event.schema.json": "bb95ee75987451a0cc2cdd45c4d2c72422e06f3ae06ef8cee96438ff18b230c8"
+    "approval-record.schema.json": "a2a9bc4e6125b5dc4a7dae5d80ca87a311dbd9f39ee326d35b73c39f1cb72311",
+    "decision-record.schema.json": "3b32d42eccb829d95835d2fd15f926d0cd18884c43785a0a645dc64a6985aac8",
+    "detection-finding.schema.json": "95157baabe9a4cafb63704b5a07514ae8711547132d64a18d96c5f1b8bb8e672",
+    "provenance-envelope.schema.json": "03f1927f00a3af7c3fca1ad19d58f02ffd9f153f0fd2a02325fc4d92961566f2",
+    "security-exception.schema.json": "df993f5342d6365011f85520d5cdd4688a11ed769dbd9fc745f73c2c2b11e45b",
+    "semantic-action.schema.json": "b2ff30d8b5ca858ce9779b1997c22926f975822dd7de58d4bde57e583ef9263d",
+    "task-contract.schema.json": "cf07ffc6204576d50a4a2f677a944fbe9fc1f67b90e89b09c33b4605176efc3e",
+    "task-grant.schema.json": "ef732fd935119169abe10d8825fca23deeb7e299c460bb92ea0a55a677210797",
+    "trace-event.schema.json": "922150675a375282b6fdfc8034c52c29d639ec6180588de3a34b0106f2e0c4fe"
   }
 }

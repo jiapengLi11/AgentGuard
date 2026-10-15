@@ -1,5 +1,10 @@
 # AgentGuard v0.1 开发设计文档
 
+> **2026-10-15 交接说明：** 历史v0.1设计，不是比赛版现状或当前执行指令。根目录agentguard/tests/benchmark保留原型，实际入口为sujie/Python控制面；Java/MySQL等旧技术栈目标不作为已完成成果。
+> [当前交接手册](sujie/docs/PROJECT_HANDOFF.md)。下文“当前/未完成/下一步”均按原阶段阅读；原始数字与证据不追溯改写，不构成继续执行授权。
+
+<!-- 原阶段正文开始 -->
+
 版本：v0.1
 项目名称：AgentGuard
 项目定位：面向 RAG / MCP Agent 的运行时安全网关与蓝队安全测试框架

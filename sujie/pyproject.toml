@@ -6,7 +6,7 @@ requires-python = ">=3.12,<3.13"
 
 [tool.pytest.ini_options]
 testpaths = ["contracts/tests", "gateway-python/tests", "tests"]
-pythonpath = ["gateway-python/src", "demo-agent", "sandbox"]
+pythonpath = ["gateway-python/src", "demo-agent", "sandbox", "eval", "control-plane-python"]
 addopts = "-ra --strict-markers"
 asyncio_mode = "auto"
 markers = ["live_llm: requires a configured external or local LLM"]

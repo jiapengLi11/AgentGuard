@@ -1,5 +1,8 @@
 # M0/M1 依赖与许可证
 
+> **2026-10-15 交接更新：** 本页保留依赖表及M0/M1/M6安装观察；Python锁和前端锁是当前版本来源。本次交接实际解释器为Windows Python3.12.2，原3.12.14/容器3.12.13/Node22.14等属于旧环境，不作为当前补丁版本要求。当前需要Python3.12.x、Node20.19+或22.12+，Git业务另需Git；Java/MySQL非依赖。旧npm审计为当时查询，未重新做安全审计。
+> 完整现状、启动与证据限制见[交接手册](PROJECT_HANDOFF.md)。
+
 安装范围：仅 sujie/.venv，不修改 Anaconda 或全局 Python。
 版本以 requirements.lock 为准；直接依赖以 requirements.txt / requirements-dev.txt 声明。
 当前锁定全部 Python 包版本，但没有声称完成 wheel Hash 校验或供应链审计。
@@ -50,8 +53,9 @@ JSON Schema 中 format 默认不必执行；本项目显式提供 FormatChecker 
 | Pygments | 测试输出高亮 | BSD-2-Clause | 否 |
 
 MCP/LangGraph 的间接依赖已记录于 requirements.lock，包括 Pydantic、HTTP 栈和加密库；
-它们扩大了依赖面，后续需要漏洞扫描和 wheel Hash 锁定。M1 尚未安装具体模型 Provider、
-Java 或前端依赖；后续按里程碑引入并固定版本。
+它们扩大了依赖面，后续需要漏洞扫描和 wheel Hash 锁定。百炼 Provider 使用已有
+标准库 HTTP 适配；Java 仍未安装。前端依赖现在由 `console-vue/package-lock.json`
+固定，下面单列。
 纯 Python 领域模型以 Schema 为唯一字段定义，不另写易漂移的传输模型。
 
 M1 Dockerfile 联网默认仍使用 `python:3.12-slim`。由于 VM 外网不可用，本次验收使用
@@ -64,3 +68,21 @@ Astral 官方 GHCR 镜像 `uv:0.12.1-python3.12-trixie-slim` 的 linux/amd64 固
 `pip --no-index`。远端按文件名排序后的 SHA-256 清单聚合值为
 `4eef9a71...7ad932e`。wheel 未提交仓库，逐文件 Hash 尚未进入锁文件，不能声称已完成
 完整供应链验证。官方 `crane` 0.22.1 只用于离线镜像传输，不进入应用运行镜像。
+
+## M6 前端
+
+Vue 3.5.44、Vite 7.3.7、@vitejs/plugin-vue 6.0.10、vue-tsc 3.3.13（MIT）；
+TypeScript 5.9.3（Apache-2.0）。Node 本机为 22.14.0；CI 选择 Node 22。
+安装范围仅 `console-vue/node_modules`，构建产物在已忽略的 `dist`。
+`npm ci` 与 `npm run build` 已本机验证，包含类型检查；本次 npm 审计返回 0 个
+已知漏洞，仅代表查询时 npm 数据库结果。CI 新增前端构建任务，远端尚未运行。
+不加载远端字体、图标、分析脚本或 CDN 资源。
+
+## M21 源码集成补记
+
+`tokenizers==0.22.2` 已存在于交付锁文件，集成时补列到直接依赖，避免仅安装
+`requirements.txt` 时遗漏实际使用的库。它用于按固定本地资产生成文本字段的 token
+区间；上游包 metadata 标注 Apache Software License，资产清单标注 Apache-2.0。
+可替代方案为只保留字符/字节区间，但不能将该降级描述为已有 token 映射。
+它参与模型请求来源审计，不签发权限或覆盖授权拒绝。新增机器应从锁文件安装并校验资产，
+不复制其他成员的虚拟环境；首次准备资产需要网络或已有经摘要核验的缓存。

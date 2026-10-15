@@ -1,1 +1,6 @@
 * text=auto eol=lf
+
+# Protocol and tokenizer manifests are byte-hashed by archived evaluations.
+# Preserve their original bytes; do not rewrite historical evidence on checkout.
+eval/protocols/*.json -text whitespace=cr-at-eol
+assets/tokenizer/*-manifest.json -text whitespace=cr-at-eol

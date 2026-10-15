@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sujie.invalid/contracts/0.1/decision-record.schema.json",
+  "$id": "https://sujie.invalid/contracts/0.2/decision-record.schema.json",
   "title": "decision-record",
   "type": "object",
   "additionalProperties": false,

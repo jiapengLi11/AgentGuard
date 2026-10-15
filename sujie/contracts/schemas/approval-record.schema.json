@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sujie.invalid/contracts/0.1/approval-record.schema.json",
+  "$id": "https://sujie.invalid/contracts/0.2/approval-record.schema.json",
   "title": "approval-record",
   "type": "object",
   "additionalProperties": false,

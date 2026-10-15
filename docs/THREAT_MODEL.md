@@ -1,38 +1,14 @@
-# Threat model
+# 当前威胁模型
 
-## Protected assets
+更新：2026-10-15，适用 `sujie/`；[原始设计](../competition/docs/SUJIE_FINAL_DESIGN.md)描述目标范围，[能力矩阵](../sujie/docs/TOPIC5_EVIDENCE_MATRIX.md)说明实际支持程度。
 
-- internal and confidential data;
-- tool credentials and privileged APIs;
-- integrity of external side effects;
-- user intent and approval state;
-- audit evidence.
+| 对象 | 需要保护/限制的内容 |
+|---|---|
+| 资产 | 任务授权、合成秘密与Provider凭据、工具效果完整性、审批状态、来源/审计证据 |
+| 不可信输入 | 用户补充消息、网页/文档/邮件/日志、MCP描述/返回、记忆、模型与子Agent输出 |
+| 代表攻击 | 角色伪装、越权读取/外发、编码执行、检视下推送、敏感委派、来源洗白、版本/参数漂移及记忆污染 |
+| 可信部分 | Host、任务/Grant/策略配置、审批认证、来源账本、效果适配器和宿主执行环境 |
 
-## Untrusted inputs
+安全目标是：即使检测漏报，内容也不能获得合同/Grant以外的授权；拒绝危险动作后仍应尽可能完成合法业务。评价必须同时检查真实副作用与独立业务Oracle。
 
-- user-controlled prompts;
-- RAG documents, web pages, PDFs and emails;
-- tool results and long-term memory content;
-- model-generated tool names and arguments.
-
-## In-scope attacks
-
-- direct and indirect prompt injection;
-- tool selection and argument manipulation;
-- forged user confirmation;
-- sensitive-data flow to an external destination;
-- unknown tool, permission and resource access.
-
-## Security goal
-
-Detection may miss an injection. A missed detection must not grant a tool,
-resource, permission, data flow or approval that is absent from the trusted
-task grant.
-
-## Out of scope for v0.1
-
-- model weight and training-data security;
-- enterprise IAM and multi-tenancy;
-- production scaling and availability;
-- complete DLP classification;
-- defense against compromise of the gateway host itself.
+当前只覆盖已适配的封闭合成流程，不是完整三来源×七绕过的正式验收。模型训练安全、Host/内核/管理员失陷、任意恶意远程Server内部行为、企业多租户与完整DLP不在现有保证内。新版整体OS隔离待Linux资源，不能用历史M1拓扑补作当前结论。[交接手册](../sujie/docs/PROJECT_HANDOFF.md)列出全部限制。

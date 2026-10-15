@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sujie.invalid/contracts/0.1/task-grant.schema.json",
+  "$id": "https://sujie.invalid/contracts/0.2/task-grant.schema.json",
   "title": "task-grant",
   "type": "object",
   "additionalProperties": false,

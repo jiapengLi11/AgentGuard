@@ -23,5 +23,9 @@ dist/
 secrets/
 evidence/
 model-cache/
+sujie/eval/reports/runs/
 node_modules/
 target/
+
+# Local teammate handoff archive; import reviewed source into the existing layout.
+/网络安全创新大赛/
