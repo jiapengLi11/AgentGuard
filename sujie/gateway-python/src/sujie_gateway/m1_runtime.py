@@ -30,7 +30,9 @@ from .contracts import (
     local_scope,
     snapshot_hash,
 )
+from .detection_v2 import normalized_view as document_normalized_view
 from .detector import ScanLimitExceeded, get_detector
+from .doc_parsing import scan_document, tool_documents
 from .dsl import evaluate, load_rules
 from .execution_policy import ExecutionPolicy
 from .git_policy import GitPolicy
@@ -1853,6 +1855,9 @@ class M1Gateway:
     ) -> tuple[str, ...]:
         """Register and scan a result; raise ResultScanRejected if any text is unscannable."""
         snapshot = snapshot or snapshot_tool_result(data)
+        documents = self._record_document_results(
+            tool, snapshot, action, executed_event, expose=expose
+        )
         effect = action.to_dict()["effect"]
         actor = self.grant.to_dict()["subject_id"]
         if tool in {"memory.read", "memory.write"} and self.memory_policy is not None:
@@ -1985,7 +1990,97 @@ class M1Gateway:
                 artifact_ids=action.to_dict()["input_artifacts"],
                 payload={"kind": effect["kind"], "resources": effect["resources"]},
             )
-        return (content_artifact, structured) if content_artifact else (structured,)
+        ordinary = (content_artifact, structured) if content_artifact else (structured,)
+        return (*ordinary, *documents)
+
+    def _record_document_results(
+        self,
+        tool: str,
+        snapshot: ToolResultSnapshot,
+        action: SemanticAction,
+        executed_event: str,
+        *,
+        expose: bool,
+    ) -> tuple[str, ...]:
+        """Record extracted sources before returning inline document results to the model."""
+        actor = self.grant.to_dict()["subject_id"]
+        artifacts = []
+        for path, document in tool_documents(snapshot.payload()):
+            if document.status != "ok":
+                self.trace.emit(
+                    "CONTENT_REGISTERED",
+                    actor_id=actor,
+                    parents=[executed_event],
+                    action_id=action.to_dict()["action_id"],
+                    payload={
+                        "tool": tool,
+                        "kind": "DOCUMENT",
+                        "scan_status": "REJECTED",
+                        "code": document.code,
+                    },
+                )
+                raise ResultScanRejected(document.code)
+            ids = []
+            for index, segment in enumerate(document.segments):
+                artifact = self.trace.create_artifact(
+                    segment.text,
+                    source_event_id=executed_event,
+                    source_id=f"{tool}:document:{len(artifacts)}:{index}",
+                    confidentiality="SECRET"
+                    if action.to_dict()["effect"]["kind"] == "credential.read"
+                    else "INTERNAL",
+                    parents=action.to_dict()["input_artifacts"] if tool == "execution.run" else [],
+                )
+                ids.append(artifact)
+                self.trace.store_normalized_view(artifact, document_normalized_view(segment.text))
+                self.trace.emit(
+                    "CONTENT_REGISTERED",
+                    actor_id=actor,
+                    parents=[executed_event],
+                    action_id=action.to_dict()["action_id"],
+                    artifact_ids=[artifact],
+                    payload={
+                        "tool": tool,
+                        "kind": "DOCUMENT",
+                        "document_source": segment.labels,
+                        "result_path": safe_path(path),
+                    },
+                )
+            try:
+                findings = scan_document(document, ids)
+            except ScanLimitExceeded:
+                raise ResultScanRejected("CONTENT_SCAN_LIMIT_EXCEEDED") from None
+            for finding in findings:
+                body = finding.to_dict()
+                body["finding_id"] = new_id()
+                views = {
+                    sid: document_normalized_view(segment.text)
+                    for sid, segment in zip(ids, document.segments)
+                }
+                self.trace.store_normalized_view(
+                    body["spans"][0]["artifact_id"],
+                    "\n".join(views[span["artifact_id"]] for span in body["spans"]),
+                )
+                self.trace.emit(
+                    "DETECTION_FINDING",
+                    actor_id=actor,
+                    parents=[executed_event],
+                    action_id=action.to_dict()["action_id"],
+                    artifact_ids=[span["artifact_id"] for span in body["spans"]],
+                    payload={"finding": body, "kind": "DOCUMENT"},
+                )
+            artifacts.extend(ids)
+        if expose and artifacts:
+            self._last_exposure_event = self.trace.emit(
+                "MODEL_EXPOSED",
+                actor_id=actor,
+                parents=[executed_event],
+                action_id=action.to_dict()["action_id"],
+                artifact_ids=artifacts,
+                payload={"tool": tool, "kind": "DOCUMENT"},
+            )
+            self._exposed_artifacts.update(artifacts)
+        return tuple(artifacts)
 
     def _record_structured_result(
         self,

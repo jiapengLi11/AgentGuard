@@ -716,7 +716,12 @@ def build_provenance_graph(
             collapsed[aid] = env["parents"][0]
     content_ids: dict[str, str] = {}
     findings_by_artifact: dict[str, list[dict]] = {}
+    document_sources: dict[str, dict] = {}
     for event in events:
+        payload = payloads[event["event_id"]]
+        if event["event_type"] == "CONTENT_REGISTERED" and "document_source" in payload:
+            for aid in event["artifact_ids"]:
+                document_sources[aid] = payload["document_source"]
         if event["event_type"] == "DETECTION_FINDING":
             finding = payloads[event["event_id"]]["finding"]
             for aid in event["artifact_ids"]:
@@ -773,9 +778,9 @@ def build_provenance_graph(
         )
         kind = _source_kind(env["origin"]["type"])
         # A trigger source is user/memory input, or external content that carries a finding.
-        if kind == "external" and not findings_by_artifact.get(aid):
+        if kind == "external" and not findings_by_artifact.get(aid) and aid not in document_sources:
             kind = None
-        if kind and not env["parents"]:
+        if kind and (not env["parents"] or aid in document_sources):
             src_id = f"source:{index}"
             resource = env["origin"]["source_id"]
             label = {
@@ -793,6 +798,7 @@ def build_provenance_graph(
                         "origin_type": env["origin"]["type"],
                         "locator": resource,
                         "trust": "USER_REQUEST" if kind == "user" else "UNTRUSTED",
+                        **document_sources.get(aid, {}),
                     },
                     seq=graph.nodes[node_id].seq,
                 )

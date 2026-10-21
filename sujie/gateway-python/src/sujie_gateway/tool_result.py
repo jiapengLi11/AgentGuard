@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import math
 from dataclasses import dataclass, field
 from typing import Any
+
+from .doc_parsing import document_type
 
 MAX_RESULT_BYTES = 262_144
 MAX_RESULT_DEPTH = 16
@@ -76,6 +79,12 @@ def snapshot_tool_result(value: dict[str, Any]) -> ToolResultSnapshot:
             raise ToolResultError("TOOL_RESULT_DEPTH_LIMIT")
         if isinstance(item, str):
             text(item, path, "VALUE")
+        elif isinstance(item, bytes):
+            if len(item) > MAX_RESULT_BYTES:
+                raise ToolResultError("TOOL_RESULT_SIZE_LIMIT")
+            if not document_type(item):
+                raise ToolResultError("TOOL_RESULT_INVALID")
+            text(base64.b64encode(item).decode("ascii"), path, "VALUE")
         elif isinstance(item, dict):
             emit("{")
             for index, (key, child) in enumerate(item.items()):

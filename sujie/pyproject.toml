@@ -3,6 +3,7 @@ name = "sujie-workspace"
 version = "0.1.0"
 description = "Sujie runtime security gateway contracts and deterministic M1 closed loop"
 requires-python = ">=3.12,<3.13"
+dependencies = ["pypdf>=6.1.1", "python-docx>=1.2.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["contracts/tests", "gateway-python/tests", "tests"]
