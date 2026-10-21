@@ -242,6 +242,18 @@ def build(md_path: Path, pdf_path: Path, plain_mode: bool = False) -> None:
             weights = [max(display_width(r[c]) for r in rows) + 2 for c in range(ncols)]
             total = sum(weights)
             col_widths = [CONTENT_W * w / total for w in weights]
+            # Long description columns dominate the proportional split and can squeeze a short
+            # label column below the width of an unbreakable word ("Node.js" -> "Node.j/s").
+            min_w = 2.6 * cm
+            for c in range(ncols):
+                if col_widths[c] < min_w:
+                    widest = max(range(ncols), key=lambda k: col_widths[k])
+                    if widest == c:
+                        continue
+                    deficit = min_w - col_widths[c]
+                    if col_widths[widest] - deficit >= min_w:
+                        col_widths[c] = min_w
+                        col_widths[widest] -= deficit
             data = [
                 [Paragraph(inline(cell), st["cellh"] if r == 0 else st["cell"]) for cell in row]
                 for r, row in enumerate(rows)
