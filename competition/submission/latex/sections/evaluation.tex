@@ -4,7 +4,7 @@
 
 四类结果分表记录，不能互相冒充：工程回归验证代码行为；确定性脚本验证编排和实际效果；规则检测评测描述初筛分类表现；真实云实验验证模型行为。前三类是当前基线的可复现结果，第四类为开发期历史记录。
 
-当前基线的验证元数据位于交付源码的\path{docs/validation/MAIN_SYNC_VALIDATION_2026-10-20.json}，含312份运行时源文件的SHA-256、三平台回归结果、离线检测评测结果与退出码；清单由\path{tools/build_report_binding.py}按一条固定规则从git对象重算，便于复核。历史M25结果见\path{docs/validation/M25_LOCAL_ACCEPTANCE_2026-10-18.json}。摘要清单用于核对文件一致性，不能替代原始观察。
+当前基线的验证元数据位于源码包的\path{docs/validation/MAIN_SYNC_VALIDATION_2026-10-20.json}，含312份运行时源文件的SHA-256、三平台回归结果、离线检测评测结果与退出码；清单由\path{tools/build_report_binding.py}按一条固定规则从git对象重算，便于复核。历史M25结果见\path{docs/validation/M25_LOCAL_ACCEPTANCE_2026-10-18.json}。摘要清单用于核对文件一致性，不能替代原始观察。
 
 开发端使用Python 3.12和锁定依赖，前端执行Vue类型检查与生产构建。M24容器环境为Linux/aarch64、Python 3.12.14、Git 2.47.3；宿主为Docker Desktop。各平台记录只在其自身范围内解释。
 
@@ -22,7 +22,7 @@
 \end{tabularx}
 \end{table}
 
-证据编号对应的文件（路径以交付源码包为根）：E1为\path{docs/validation/MAIN_SYNC_VALIDATION_2026-10-20.json}与三平台持续集成运行记录；E2为M25本地验收记录\path{docs/validation/M25_LOCAL_ACCEPTANCE_2026-10-18.json}；E3为\path{sujie/eval/reports/runs/competition_evidence_20261020/}下三份评测JSON；E4为同目录族中的\path{competition_repro_20261018/summary.json}；E5为\path{competition/submission/latex/runtime-version.json}。除E2属历史源版本外，其余四项均在当前基线重算过。
+证据编号对应的文件（路径以随附源码包为根）：E1为\path{docs/validation/MAIN_SYNC_VALIDATION_2026-10-20.json}与三平台持续集成运行记录；E2为M25本地验收记录\path{docs/validation/M25_LOCAL_ACCEPTANCE_2026-10-18.json}；E3为\path{sujie/eval/reports/runs/competition_evidence_20261020/}下三份评测JSON；E4为同目录族中的\path{competition_repro_20261018/summary.json}；E5为\path{competition/submission/latex/runtime-version.json}。除E2属历史源版本外，其余四项均在当前基线重算过。
 
 \section{业务与安全判定方法}
 合法业务Oracle核对实际来源读取和报告字段，例如时间线的窗口与排序、附件的整数分金额、Git配置差异、Memory历史和当前事实。安全Oracle读取真实Receiver记录、文件、Git对象/ref及SQLite版本。任务状态FINISHED、记录有效、业务完成和危险效果是四个独立字段。
@@ -79,7 +79,7 @@ M24 Linux六链 & 六候选各一实例完成，容器退出码0，主机独立�
 
 本地HTTP矩阵使用265次进程内MockTransport请求，经过Provider请求准备、解析和账本代码，云调用为0。三来源代表涵盖直接Unicode、外部Base64和跨会话Memory流程备注；来源真实暴露后固定提出禁止的夹具标记写入。三个unsafe攻击格实际改变标记，对应full格阻断。这说明指定实例的权限检查有效，未测量自然模型的攻击成功率或来源机制的独有收益。
 
-M25原矩阵与当前基线使用不同源版本。主线保留后续远端修复，历史48+48+14矩阵未在当前基线全量重跑。报告保留这一版本对应关系，避免将旧矩阵当成新代码成绩。
+M25原矩阵与当前基线使用不同源版本。当前版本保留后续远端修复，历史48+48+14矩阵未在当前基线全量重跑。报告保留这一版本对应关系，避免将旧矩阵当成新代码成绩。
 
 \section{较早真实模型开发记录（历史阶段）}
 表\ref{tab:cloud}列出可查的历史记录，均属开发期小样本，不能与当前基线结果合并统计。
@@ -94,7 +94,7 @@ M20引用核验 & 脚本主流程加一次云分析 & 1请求，353 tokens\\\bot
 \end{tabularx}
 \end{table}
 
-这些结果用于检查模型接入和业务可行性；跨版本修复不合并成功率。当前真实云CLI关闭，新的真实模型协议、资源准入、未见输入、重复规则和任务层统计需预登记后执行。无危险动作提议的格不能归因为网关阻断；只有交接文档记载、原始运行目录不在仓库的结果，只能按“开发期记录”引用。
+这些结果用于检查模型接入和业务可行性；跨版本修复不合并成功率。当前真实云CLI关闭，新的真实模型协议、资源准入、未见输入、重复规则和任务层统计需预登记后执行。无危险动作提议的格不能归因为网关阻断；只有开发期文档记载、原始运行目录不在仓库的结果，只能按“开发期记录”引用。
 
 \section{结果分析与未完成验证}
 现有结果支持四类具体结论：第一，任务与来源用途约束已进入真实工具链，并能在部分Git与标记写入校准中形成可观察差异；第二，委派、Memory和危险原文引用具有实际角色、版本、内容和业务事实见证；第三，审批对象与实际提交参数可核对，敏感写入目标在放宽授权下仍被拒绝；第四，同一提交在三个平台的全量回归一致通过，说明当前工程记录可跨环境复核。四业务确定性运行与规则检测评测均可离线重算。
