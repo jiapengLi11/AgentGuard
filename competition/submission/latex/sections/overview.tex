@@ -9,7 +9,7 @@
 \section{相关工作与作品切入点}
 已有研究形成了几条互补路线。CaMeL通过能力和信息流约束区分控制流与不可信数据\cite{camel}；Task Shield核验指令和工具调用是否服务用户目标\cite{taskshield}；AgentSpec以领域策略描述并执行运行约束\cite{agentspec}。AuthGraph比较授权与实际来源关系\cite{authgraph}，AgentVisor研究语义权限分离与违规后的反馈\cite{agentvisor}，ContainmentBench和AID-Guard分别关注暴露后的遏制评估和委派效果的状态化授权\cite{containment,aidguard}。MCP-SafetyBench与MCPTox提供MCP安全和工具投毒的基准研究\cite{mcpsafety,mcptox}。
 
-溯界的切入点是将任务授权、来源用途和实际效果收据放入同一执行链，支持危险资料研判、跨角色委派和跨会话记忆。表\ref{tab:position}说明本作品使用已有思路时增加的具体工程对象和验收方式，机制维度的横向对照见表\ref{tab:compare}。相关机制的组合价值由后文逐项给出证据，比较实验范围见第三章。
+溯界的切入点是将任务授权、来源用途和实际效果收据放入同一执行链，支持危险资料研判、跨角色委派和跨会话记忆。表\ref{tab:position}说明本作品使用已有思路时增加的具体工程对象和验收方式，机制维度的横向对照见表\ref{tab:compare}。具体实现和验证范围分别见第二、三章。
 
 \begin{table}[htbp]\centering
 \caption{作品切入点与验收对象}\label{tab:position}
@@ -23,23 +23,23 @@
 \end{table}
 
 \section{功能定位与实用性}
-当前实现包含13个开发profile：告警报告、公开IOC传输、网页核查、构件校验、Git检视、Git发布、多层委派、记忆复核、记忆更新、事件时间线、Issue分级、附件一致性核对和知识版本协调。profile是可运行的业务入口，独立任务与评测单元另行登记。
+原型提供13类业务配置：告警报告、公开IOC传输、网页核查、构件校验、Git检视、Git发布、多层委派、记忆复核、记忆更新、事件时间线、Issue分级、附件一致性核对和知识版本协调。每类配置对应一种业务入口；配置数量不等于独立测试任务数。
 
 面向大型企事业单位，系统可作为智能体平台接入真实工具前的授权与审计组件：把一次操作关联到任务目标、输入来源、批准对象和实际结果。当前验证使用合成资料、封闭接收端和本地Git远端，便于在不触及真实业务资产的情况下演示和复核。
 
-表\ref{tab:rules}按赛题列明的规则逐条给出实现状态与证据位置。状态栏只用“已完成”和“部分完成”两种取值：前者指该规则有真实工具链上的可复现测试，后者指机制已实现但验收范围仍有限，具体边界见第三章。
+表\ref{tab:rules}按赛题列明的规则逐条给出实现状态与证据位置。表中的“实例已验证”表示已有受控工具链用例，“部分实现”表示尚有明确缺项；两者均不代表对任意载荷的完整覆盖。
 
 \begin{table}[htbp]\centering
 \caption{赛题列明规则与实现状态}\label{tab:rules}
 \begin{tabularx}{\textwidth}{P{0.215\textwidth}P{0.135\textwidth}Y}\toprule
 赛题列明规则 & 状态 & 实现对象与证据位置\\\midrule
-\texttt{fs.write} 写凭据、Shell启动文件、定时任务、VCS钩子与IDE设置 & 已完成 & 不可覆盖敏感名单，放宽Grant下仍拒绝（\ref{sec:sensitive}节，真实stdio MCP测试）\\
-\texttt{net.fetch} 外发会话内已读secret & 已完成 & 来源用途信封与目的地判定，封闭Receiver给出实际接收记录（\ref{sec:effect}节）\\
-\texttt{exec} 执行\texttt{base64}解码或管道下载脚本 & 已完成 & 注册程序以程序身份、确切argv和摘要核验，非任意Shell（\ref{sec:effect}节）\\
-代码检视期间\texttt{git.push} & 已完成 & 检视保持远端ref不变；发布绑定确切commit/remote/ref并需审批（\ref{sec:approval}节）\\
-子Agent违规传递secret & 已完成 & 子Grant收窄资源/操作/预算，父Host接收保留来源的结果（\ref{sec:delegation}节）\\
-放行/审批/阻断三态 & 已完成 & 策略DSL输出ALLOW/ASK/BLOCK，硬拒绝优先（\ref{sec:effect}节）\\
-运行时风险等级 & 部分完成 & 决策记录含由实际决策反推的风险字段；尚无独立校准的风险分级器\\\bottomrule
+\texttt{fs.write} 写凭据、Shell启动文件、定时任务、VCS钩子与IDE设置 & 实例已验证 & 不可覆盖敏感名单，放宽Grant下仍拒绝（\ref{sec:sensitive}节，真实stdio MCP测试）\\
+\texttt{net.fetch} 外发会话内已读secret & 实例已验证 & 来源用途信封与目的地判定，封闭Receiver给出实际接收记录（\ref{sec:effect}节）\\
+\texttt{exec} 执行\texttt{base64}解码或管道下载脚本 & 实例已验证 & 仅允许已注册程序及确切参数，拒绝未登记命令；未提供通用Shell安全执行（\ref{sec:effect}节）\\
+代码检视期间\texttt{git.push} & 实例已验证 & 检视保持远端ref不变；发布绑定确切commit/remote/ref并需审批（\ref{sec:approval}节）\\
+子Agent违规传递secret & 实例已验证 & 子Grant收窄资源/操作/预算，父Host接收保留来源的结果（\ref{sec:delegation}节）\\
+放行/审批/阻断三态 & 实例已验证 & 策略DSL输出ALLOW/ASK/BLOCK，硬拒绝优先（\ref{sec:effect}节）\\
+运行时风险等级 & 部分实现 & 决策记录含由实际决策反推的风险字段；尚无独立校准的风险分级器\\\bottomrule
 \end{tabularx}
 \end{table}
 

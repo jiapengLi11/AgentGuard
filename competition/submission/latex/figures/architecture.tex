@@ -1,47 +1,22 @@
-\begin{figure}[htbp]\centering%
-\xeCJKDeclareCharClass{CJK}{"2460->"2473}%
-\resizebox{\linewidth}{!}{%
-\begin{tikzpicture}[x=1cm,y=1cm,line width=0.6pt,font=\small,
-  grp/.style={draw=black!80,fill=black!5},
-  box/.style={draw=black!80,fill=white,align=center,minimum height=0.9cm,inner sep=3pt},
-  lab/.style={font=\footnotesize,align=center,inner sep=1.5pt},
-  arr/.style={-{Stealth[length=2mm]},draw=black!80}]
-% console
-\node[box,fill=black!5,minimum width=14.9cm,minimum height=0.8cm] (ui) at (7.5,9.2) {操作员控制台（下发任务 · 人工审批 · 查看溯源图）};
-% left group
-\draw[grp] (0,1.7) rectangle (3.9,7.8);
-\node[align=center,font=\small] at (1.95,7.35) {自研演示智能体\\（百炼大模型）};
-\node[box,minimum width=2.1cm] (task) at (1.25,6.0) {任务输入};
-\node[box,minimum width=2.1cm,text width=1.9cm] (llm) at (1.25,3.6) {大模型调用\\/ 子 Agent};
-\draw[arr] (task)--(llm);
-\node[box,dashed,minimum width=1.0cm,text width=0.9cm,minimum height=2.6cm,font=\footnotesize] (sdk) at (3.1,5.4) {溯界\\SDK\\（宿主\\Hook\\接口）};
-\node[lab,text=black!70] at (1.95,1.15) {可替换为 Claude Code / Cursor\\等宿主（需接入 SDK）};
-% gateway
-\draw[grp] (5.6,0.4) rectangle (9.8,7.8);
-\node[font=\small] at (7.9,7.45) {溯界安全网关};
-\node[lab] at (7.9,7.0) {SDK + MCP 中间代理};
-\node[box,minimum width=3.4cm] (s1) at (7.9,6.0) {① 多源注入检测\\（直接 + 间接）};
-\node[box,minimum width=3.4cm] (s2) at (7.9,4.6) {② 意图对齐研判};
-\node[box,minimum width=3.4cm] (s3) at (7.9,3.2) {③ 策略决策\\（放行 / 审批 / 阻断）};
-\node[box,minimum width=3.4cm] (s4) at (7.9,1.8) {④ 全链路溯源};
-\draw[arr] (s1)--(s2); \draw[arr] (s2)--(s3); \draw[arr] (s3)--(s4);
-% tools
-\draw[grp] (11.4,2.6) rectangle (15,7.8);
-\node[font=\small] at (13.2,7.35) {MCP 服务器与工具};
-\node[box,minimum width=2.9cm] (t1) at (13.2,6.2) {文件 / Git};
-\node[box,minimum width=2.9cm] (t2) at (13.2,5.0) {网页 / HTTP};
-\node[box,minimum width=2.9cm] (t3) at (13.2,3.8) {工单 / 邮件 / 记忆};
-% external
-\node[box,draw=red!60!black,text=red!60!black,minimum width=3.6cm,text width=3.4cm] (ext) at (13.2,1.0) {外部不可信内容\\{\footnotesize 恶意网页 · 投毒文档\\恶意 MCP server}};
-\draw[arr,draw=red!60!black] (ext.north)--(13.2,2.6) node[lab,midway,right,text=red!60!black] {注入载荷};
-% arrows
-\draw[arr] (0.55,8.8)--(0.55,6.45) node[lab,pos=0.25,right] {下发任务};
-\draw[{Stealth[length=2mm]}-{Stealth[length=2mm]},draw=black!80] (5.9,8.8)--(5.9,3.2)--(s3.west);
-\node[lab,left] at (5.9,8.3) {ASK 审批};
-\draw[arr,dashed] (sdk.east|-0,6.0)--(5.6,6.0) node[lab,midway,above] {进程内调用\\上下文 /\\输出登记};
-\draw[arr] (llm.east)--(5.6,3.6) node[lab,midway,above] {MCP 工具调用};
-\draw[arr] (9.8,6.1)--(11.4,6.1) node[lab,midway,above] {放行后转发};
-\draw[arr] (11.4,4.6)--(9.8,4.6) node[lab,midway,below] {结果回流\\检测};
-\end{tikzpicture}}
-\caption{溯界系统架构：自研演示智能体经溯界 SDK 与 MCP 中间代理接入安全网关，工具调用与返回结果均经检测、研判、决策与溯源。}\label{fig:architecture}
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[
+ box/.style={draw,align=center,text width=3.6cm,minimum height=1cm,inner sep=4pt,font=\small},
+ arr/.style={-{Stealth[length=2mm]},thick},
+ lab/.style={font=\scriptsize,fill=white,inner sep=2pt}]
+\node[box,fill=black!5] (host) at (0,0) {可信宿主与模型循环\\自研演示智能体\\百炼模型 / 脚本模型};
+\node[box,fill=blue!5] (source) at (5,0) {资料与返回登记\\来源用途信封\\有界快照、规则初筛};
+\node[box,fill=blue!5] (gate) at (0,-2.3) {网关执行前核验\\物化参数、效果适配\\契约 / Grant / 来源 / DSL};
+\node[box,fill=orange!8] (approval) at (5,-2.3) {操作员控制台\\查看预览、批准、提交\\提交前重新核验};
+\node[box,fill=green!6] (tools) at (0,-4.7) {已注册适配器 / stdio MCP\\文件、网络、Git、程序\\记忆与受控委派};
+\node[box,fill=black!5] (ledger) at (5,-4.7) {事件账本与实际收据\\离线溯源图 / 时间线\\脱敏导出与独立核验};
+\draw[arr] (host)-- node[lab,left]{动作提议} (gate);
+\draw[arr] (source)-- node[lab,above]{登记后输入模型} (host);
+\draw[arr] (gate)-- node[lab,left]{ALLOW} (tools);
+\draw[arr] (gate)-- node[lab,above]{ASK} (approval);
+\draw[arr] (approval.south west)-- node[lab,right]{批准后提交复核} (gate.south east);
+\draw[arr] (tools.west)--++(-0.65,0)|- node[lab,pos=0.15,left]{结果回流} (source.north);
+\draw[arr,dashed] (gate.south east)-- node[lab,above,sloped]{决策事件（含BLOCK）} (ledger.north west);
+\draw[arr,dashed] (tools)-- node[lab,above]{执行与状态记录} (ledger);
+\end{tikzpicture}
+\caption{原型处理路径。宿主包含网关，规则初筛与动作授权分别核验；阻断后的对齐说明和离线溯源图不构成独立执行前语义判定。}\label{fig:architecture}
 \end{figure}
