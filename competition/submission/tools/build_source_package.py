@@ -26,6 +26,10 @@ INCLUDE_DIRS = [
 ]
 # Deliberately flat: only material a reviewer needs to build, run and audit the work.
 INCLUDE_FILES = [
+    ".github/workflows/sujie-ci.yml",
+    "PACKAGE_VERSION.json",
+    "CONSOLE_THIRD_PARTY_NOTICES.txt",
+    "run.py",
     "competition/submission/部署说明-溯界.md",
     "competition/submission/测试样例与流程说明-溯界.md",
     "docs/ARCHITECTURE.md",
@@ -40,7 +44,7 @@ EXCLUDE_FILES = {"competition/submission/latex/README.md"}
 
 EXCLUDE_DIRS = {
     ".git", ".venv", "venv", "node_modules", "__pycache__", ".pytest_cache", ".ruff_cache",
-    "model-cache", ".control-runtime", "dist", "htmlcov", ".mypy_cache", ".codex-doc-review",
+    "model-cache", ".control-runtime", "dist", "htmlcov", ".mypy_cache", ".codex-doc-review", ".local-fonts",
 }
 EXCLUDE_SUFFIXES = (
     ".sqlite3", ".sqlite3-journal", ".pyc", ".pyo", ".log", ".key", ".pem", ".p12", ".pfx",
@@ -109,6 +113,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=".")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--console-dist", type=Path, help="Include a separately built Vue dist")
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
@@ -128,6 +133,16 @@ def main() -> int:
         path = root / name
         if path.is_file():
             files.append((path, name))
+
+    if args.console_dist:
+        console = args.console_dist.resolve()
+        if not (console / "index.html").is_file():
+            ap.error("--console-dist must contain index.html")
+        for path in sorted(console.rglob("*")):
+            if path.is_symlink():
+                ap.error("Console assets must not contain symlinks")
+            if path.is_file() and not path.name.endswith(".map"):
+                files.append((path, "sujie/console-vue/dist/" + path.relative_to(console).as_posix()))
 
     suspects: list[str] = []
     synthetic: list[str] = []
@@ -169,12 +184,15 @@ def main() -> int:
             "cd sujie",
             "python3 -m venv .venv",
             ".venv/bin/python -m pip install -r requirements.lock",
+            *([] if args.console_dist else ["cd console-vue && npm ci && npm run build && cd .."]),
             ".venv/bin/python dev.py demo      # 确定性演示",
             ".venv/bin/python dev.py console   # 操作台 http://127.0.0.1:8765",
             ".venv/bin/python dev.py check     # lint + 全量回归",
             "```",
             "",
             "- Python 3.12.x；Node.js 20.19+ 或 22.12+ 仅前端控制台构建需要。",
+            *( ["- 本包附带已构建控制台，直接启动无需 Node.js；修改前端后须重新构建。"] if args.console_dist else []),
+            "- Windows：`py -3.12 -m venv .venv`，后续 Python 命令使用 `.venv\\Scripts\\python.exe`。",
             "- 离线检测复现：`dev.py eval-detection`、`dev.py eval-bypass`、`eval/run_public_injection.py`。",
             "- 规则检测指标为离线初筛结果，不是 Agent ASR，也不是网关实际阻断率。",
             "",

@@ -1,0 +1,128 @@
+{
+  "schema": "sujie-submission-package-review-v1",
+  "date_beijing": "2026-10-22",
+  "inspected_main": "818710a20e23d84df3ef79f9ac4e8c7848ca08bb",
+  "runtime_commit": "96d591b14460a531004ae2b18aa4004a24af78d3",
+  "report_binding_commit": "1b64b1fdfbbd108decdede7383adc5cfb297626d",
+  "source_files_checked": 312,
+  "source_mismatches_before_and_after": [],
+  "installation": {
+    "kind": "fresh venv from extracted submission archive",
+    "python": "3.12.15",
+    "locked_packages": 71,
+    "dependency_check": "uv pip check: compatible",
+    "platform": "macOS 27.0.1, Apple M5, 16 GiB"
+  },
+  "full_check": {
+    "command": "python dev.py check",
+    "exit_code": 0,
+    "passed": 1107,
+    "skipped": 1,
+    "xfailed": 1,
+    "warnings": 1,
+    "seconds": 494.33,
+    "ruff": "passed",
+    "format_files": 237,
+    "known_skip": "Pinned tokenizer asset not shipped",
+    "known_xfail": "Approved effect with oversized result lacks RESOURCE_AFFECTED event; this is an unresolved audit gap",
+    "sanitized_log_sha256": "75f0ec09dbbdff46c36c6318ce77244ee8950a3e3636c93e69831425790205c3"
+  },
+  "first_package_failure": {
+    "passed": 1106,
+    "failed": 1,
+    "seconds": 496.77,
+    "cause": "Missing .github/workflows/sujie-ci.yml required by scaffold self-test",
+    "repair": "Include exact baseline CI configuration in source distribution; rerun full check",
+    "sanitized_log_sha256": "fb5dfed6ea148d397dce7f83a53c77b37897b7bac7315a171d71d647d0da5052"
+  },
+  "business_reproduction": {
+    "completed": 16,
+    "planned": 16,
+    "cloud_calls": 0,
+    "archive_verification": {
+      "ok": true,
+      "scope": "LOCAL_ARCHIVE_EXPORT_CONSISTENCY_NOT_SIGNED_AUTHENTICITY_OR_ASR",
+      "verifier_sha256": "5e287362e7c16eff379ddc414a60adf4ac14b7c98532273363fd8fb87be838fa",
+      "runtime_archive_sha256": "58806af92fd1e47a157def0e5208418c180b1596e2a31e52d49f297989c42775",
+      "source_files": 96,
+      "current_sources_match": true,
+      "current_source_mismatches": [],
+      "m9_frozen_matches": {
+        "demo-agent/sujie_demo_agent/semantic_detector.py": true,
+        "gateway-python/src/sujie_gateway/detection.py": true,
+        "eval/task_aware_protocol.py": true,
+        "eval/run_frozen_task_aware.py": true
+      },
+      "recorded_validation_passed": true
+    }
+  },
+  "detectors": {
+    "frozen": {
+      "tp": 5,
+      "fn": 2,
+      "fp": 1,
+      "tn": 6
+    },
+    "bypass": {
+      "tp": 21,
+      "fn": 0,
+      "fp": 0,
+      "tn": 21
+    },
+    "public": {
+      "confusion": {
+        "tp": 45,
+        "fn": 35,
+        "fp": 0,
+        "tn": 60
+      },
+      "n": 140,
+      "precision": 1.0,
+      "recall": 0.5625,
+      "fpr": 0.0
+    }
+  },
+  "console": {
+    "health": 200,
+    "homepage": 200,
+    "assets": [
+      {
+        "path": "/assets/index-CxnvbHuF.js",
+        "status": 200
+      },
+      {
+        "path": "/assets/index-C5f1Ykj4.css",
+        "status": 200
+      }
+    ],
+    "unauthenticated_tasks": 401,
+    "authenticated_tasks": 200,
+    "task_count": null,
+    "cloud_calls": 0,
+    "port_scope": "owned temporary loopback server"
+  },
+  "console_build": {
+    "node": "24.21.0",
+    "npm_ci": 0,
+    "vue_typecheck_vite": 0,
+    "source_scope": "312 pinned sources unchanged; Vue tracked sources checked separately by package builder"
+  },
+  "scope": "Local package acceptance only; no new cloud experiment or claim of production isolation. Teammate PDF/DOCX parsing merged later is outside this runtime snapshot.",
+  "evidence_scan_review": {
+    "potential_hits": 3,
+    "conclusion": "false positives inside hash-bound source snapshot",
+    "details": [
+      "A literal home-directory split delimiter in provenance_graph.py, not a personal home directory",
+      "A timestamp-format regular expression, not a Windows filesystem path"
+    ],
+    "action": "Original hash-bound source snapshot preserved; no anonymization of source code bytes"
+  },
+  "font_provenance": {
+    "family": "SimSun",
+    "version": "5.23",
+    "source": "https://github.com/zispace/hanzi-fonts/blob/main/中易/宋体%20simsun.ttc",
+    "source_blob": "4cbcb711424cbeb9613c7b6a78b7042224d32d0f",
+    "distribution": "Font file kept local only, excluded from Git and source/LaTeX archives",
+    "note": "Public archive, not an independent Microsoft download or a license verification"
+  }
+}

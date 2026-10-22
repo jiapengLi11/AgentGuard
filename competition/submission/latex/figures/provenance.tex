@@ -11,17 +11,17 @@
 ]
 \node[src] (sa) at (0,1.15) {网页正文\\（不可信来源）};
 \node[src] (sb) at (0,-2.35) {MCP 工具返回\\结构化字段};
-\node[art] (c1) at (3.35,-0.6) {来源构件 $C_1$\\跨服务器复用\\合并为同一节点};
+\node[art] (c1) at (3.35,-0.6) {来源构件 $C_1$\\重复引用\\合并为同一节点};
 \node[prop] (p1) at (6.7,1.15) {提议 $P_1$\\写 SSH 配置};
 \node[prop] (p2) at (6.7,-2.35) {提议 $P_2$\\引用原文生成\\报告字段};
 \node[deny] (d1) at (10.05,1.15) {\textbf{BLOCK}\\不可覆盖名单\\效果未发生};
 \node[give] (d2) at (10.05,-2.35) {\textbf{ALLOW}\\执行并记录\\报告字段};
 \draw[arr] (sa) -- node[midway,above,lab]{派生} (c1);
 \draw[arr] (sb) -- node[midway,below,lab]{派生} (c1);
-\draw[arr] (c1) -- node[pos=0.45,above,lab]{派生} (p1);
-\draw[arr] (c1) -- node[pos=0.45,below,lab]{派生} (p2);
+\draw[arr] (c1) -- node[pos=0.45,above,lab]{上下文关联} (p1);
+\draw[arr] (c1) -- node[pos=0.45,below,lab]{输入关联} (p2);
 \draw[arr] (p1) -- node[midway,above,lab]{策略} (d1);
 \draw[arr] (p2) -- node[midway,below,lab]{策略} (d2);
 \end{tikzpicture}
-\caption{溯源图上还原的一次注入链路。节点为类型化实体，边标注派生与策略两类关系；同一构件在图中只有一个节点，不同使用各自保留一条边。}\label{fig:provenance}
+\caption{来源构件的两条使用路径（机制示意，非某次运行的原始导出）。关联线不表示已证明模型内部因果关系。}\label{fig:provenance}
 \end{figure}

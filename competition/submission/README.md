@@ -1,122 +1,32 @@
-# 初赛提交材料（作品文档资料）
+# 初赛提交材料
 
-> **LaTeX交付修订：** 新报告入口为 [`latex/main.tex`](latex/main.tex)，正文更新至M25/主线 `99cba60`，补回官方要求保留的填写说明页，加入正式矢量图、结果表和自动引用。GitHub XeLaTeX首轮构建已通过，当前产物与版式状态见 [PR #15](https://github.com/jiapengLi11/AgentGuard/pull/15)；正式SimSun字体仍待验收。旧Release和下文PDF数量/页数属于先前M21草稿。详见 [交付修订与待验收项](LATEX_DELIVERY_REVIEW.md)。
+当前修订入口为 [交付复核（2026-10-22）](交付复核-2026-10-22.md)。旧的 2026-10-18、2026-10-20 清单、Release 和历史报告仅供追溯，不是本次上传入口。
 
-> **历史交付草稿，2026-10-18补记：**本目录保留远端基于M21资料形成的提交文稿、构建工具及 `submission-2026-10-18` Release引用；以下“已生成”、页数、包大小和复现结果均属于该旧快照，附件未因本次main同步而更新。报告与旧附件尚未反映M22—M25修复和证据，不能作为M25已验收成品。当前状态见[M25报告](../docs/M25_AND_OVERALL_REPORT_2026-10-18.md)及[main同步记录](../../docs/GITHUB_MAIN_SYNC_2026-10-18.md)；正式提交前须更新事实、重新生成、检查匿名与许可、渲染复核并验收。保留旧Release，不覆盖其历史附件。
+本次程序固定在 `96d591b`，报告绑定提交为 `1b64b1f`，312 份运行时源码按 SHA-256 核验；文稿取当前修订版。最新开发分支新增的 PDF/DOCX 解析不纳入这一基线的测试成绩。程序包为 Python 源码发行包，附预构建 Vue 控制台；安装 Python 3.12 依赖后可运行，不是独立 EXE。
 
-> 对应：第五届中国研究生网络安全创新大赛 · 揭榜挑战赛 · 题目5
-> 官方模板：附件2《中国研究生网络安全创新大赛作品相关模板》
-> 截止：2026-10-22（报名已于 2026-10-18 完成）
+## 提交要求
 
-本目录用于集中整理**面向网评提交**的作品文档资料草稿。源码与证据仍以仓库现行结构为准；本目录只放提交件本身。
+作品文档资料为 PDF、大小不超过 10M，文件名为“队长姓名+作品名称+资料名称”。报告保留官方填写说明、摘要、五章和参考文献，不出现学校、院系、指导教师或作者身份。原创性声明单独提交，不能混入匿名报告。
 
-## 官方硬约束（来自附件2与提交通知）
+官方模板要求 A4、正文宋体小四、1.5 倍行距。报告源文件为 [latex/main.tex](latex/main.tex)；正式字体文件只放本机忽略目录 `latex/.local-fonts/`，不上传或打包。CI 的 FandolSong 编译件只用于构建检查，不能覆盖本机宋体版 PDF。
 
-- 作品文档资料为 **PDF，≤10M**；平台最多上传 **10 个文件，单个 ≤500MB**。
-- 文件命名：`队长姓名+作品名称+资料名称`（队长姓名由团队填写）。
-- 报告排版：**A4；除标题外宋体、小四号字、1.5 倍行距**。
-- **不得出现学校、院系、指导教师等身份信息**，违者取消资格。
-- 报告结构：摘要 / 第一章 作品概述 / 第二章 作品设计与实现 / 第三章 作品测试与分析 / 第四章 创新性说明 / 第五章 总结 / 参考文献。
-- 另需：**作品原创性声明**（组员签名）；往届参加者才需“作品重大改进说明”（本次不适用）。
-
-## 提交件清单与状态（**2026-10-18 M21 历史快照，勿直接上传**）
-
-> **当前权威清单见 [`交付总表-2026-10-20.md`](交付总表-2026-10-20.md)**（基线 `96d591b`）。下表保留历史记录，其页数、包大小与复现结果均属旧快照。
-
-| # | 文件（`（队长姓名）+溯界+资料名称`） | 内容 | 状态 |
-|---|---|---|---|
-| 1 | 作品报告.pdf | 按官方模板七部分（含封面/目录/页脚页码） | **已生成**，19 页 / 0.35MB |
-| 2 | 原创性声明.pdf（+ .docx） | 官方文本 | **已生成**，待组员签名 |
-| 3 | 部署说明.pdf | 安装、启动、一键复现、已知限制 | **已生成** |
-| 4 | 测试样例与流程说明.pdf | eval 协议/样例/Oracle/流程 | **已生成** |
-| 5 | 证据包.zip | 脱敏 runs + SHA-256 清单 + 复现说明 | **已生成**（本机复现，35 文件 / 0.9MB） |
-| 6 | 可执行程序.zip | 源码 + 一键脚本 | **已生成**（363 文件 / 1.1MB） |
-| 7 | 演示视频.mp4 | 答辩演示录屏 | 待录制（见 `演示脚本-溯界.md`） |
-
-> 产物均输出到 `dist/`（已 gitignore）；重新生成见下方命令。文件名中的「队长姓名」由团队在正式提交时替换。
->
-> 成品快照已发布到 Release [`submission-2026-10-18`](https://github.com/jiapengLi11/AgentGuard/releases/tag/submission-2026-10-18)。**Release 附件使用 ASCII 文件名**（GitHub 附件上传端点不接受中文名），正式提交前请重命名为「队长姓名+作品名称+资料名称」。
->
-> 跨平台：`build_report_pdf.py` 自动探测中文字体（macOS Songti / Windows SimSun / Linux Noto CJK），可用 `SUJIE_REPORT_FONT` 等环境变量覆盖。
-
-## 本目录文件
-
-- `交付总表-2026-10-20.md`：**当前唯一上传口径**（基线 `96d591b`，槽位/数字/阻塞/重建命令）。
-- `作品报告-溯界.md`：作品报告草稿（含元信息块，正式 PDF 中删除）。**已被 `latex/` 取代**。
-- `latex/`：**正式作品报告的 LaTeX 工程**（五章 + 摘要 + 参考文献 + 填写说明页）。绑定快照见 `latex/runtime-version.json`；由 CI 编译，产物为 `sujie-m25-latex-review` 附件。
-- `LATEX_DELIVERY_REVIEW.md`：报告与交付资料的**权威状态与待验收清单**。
-- `tools/check_report_latex.py`：报告源码检查器（引用提交、验证记录哈希、清单一致性、摘要字数、匿名）。
-- `tools/build_report_binding.py`：按一条固定规则从 git 对象重算源码清单，生成报告绑定记录（拒绝覆盖已有文件）。
-- `部署说明-溯界.md`：部署与复现说明（含已知限制与未验收项）。
-- `测试样例与流程说明-溯界.md`：测试样例、Oracle、基线与复现流程。
-- `tools/build_report_docx.py`：Markdown→DOCX 转换脚本，套用官方格式（A4、宋体小四、1.5 倍行距）。构建产物输出到 `dist/`（已忽略）。
-- `tools/build_report_pdf.py`：Markdown→PDF 转换脚本，生成**封面页 + 目录 + “第 X 页 共 Y 页”页脚**，并**嵌入系统中文字体**，无需阅读器自带字体；`--plain` 模式用于声明与说明类文档。
-  - 字体自动探测：macOS `Songti.ttc` → Windows `simsun.ttc` / `msyh.ttc` → Linux `NotoSerifCJK` / `uming` / `wqy`；找不到时给出清晰报错。
-  - 可用环境变量覆盖：`SUJIE_REPORT_FONT` / `SUJIE_REPORT_FONT_INDEX` / `SUJIE_REPORT_BOLD_FONT` / `SUJIE_REPORT_BOLD_INDEX`（`.ttc` 需指定子字体序号）。
-- `tools/build_evidence_packet.py`：打包脱敏证据（逐文件 SHA-256 + 清单 + 个人路径/凭据扫描，自动排除预算账本与缓存）。
-- `tools/build_source_package.py`：打包提交源码（排除虚拟环境、缓存、模型缓存、本地运行状态、凭据与原始 runs，并做凭据模式扫描）。
-- `作品原创性声明-溯界.md`：官方声明文本（待签名）。
-
-构建报告 Word：
+## 复核与构建
 
 ```sh
-cd competition/submission
-uv run --no-project --with python-docx python3 tools/build_report_docx.py \
-  作品报告-溯界.md "dist/溯界-作品报告.docx"
+python3 competition/submission/tools/check_report_latex.py
+python3 -m unittest discover -s competition/submission/tools -p test_check_report_latex.py
+# 使用固定基线的前端目录完成 npm ci && npm run build 后：
+python3 competition/submission/tools/build_frozen_source_package.py \
+  --console-dist /path/to/frozen-runtime/sujie/console-vue/dist \
+  --out /path/to/可执行程序.zip
 ```
 
-构建报告 PDF（当前 19 页、约 0.35MB，≤10MB 限制）：
+冻结打包器从 Git 对象读取报告基线，逐一核对 312 份源码，再覆盖当前文稿；它不会把工作区的新运行时代码混入包内。前端源文件和锁文件也须与该基线一致。程序包及证据包各有逐文件哈希清单。
 
-```sh
-uv run --no-project --with reportlab python3 tools/build_report_pdf.py \
-  作品报告-溯界.md "dist/溯界-作品报告.pdf"
-```
+部署与测试 PDF 分别由 [部署说明](部署说明-溯界.md)、[测试样例与流程说明](测试样例与流程说明-溯界.md) 生成。报告 LaTeX 工程、文稿源码、验证记录和打包工具均可由队友修改。生成后必须重新检查 PDF、源码绑定和清单，不沿用旧文件大小与页码。
 
-> 说明：两个脚本均不复制官方模板中的“填写说明”页；正式提交前请按官方要求将文件命名为“队长姓名+作品名称+资料名称”，并确认全文不含身份信息。
+## 当前验证范围
 
-## 一键生成全部提交件
+本机从交付包解压、创建独立环境、安装 71 项锁定依赖后，全量检查为 1107 passed / 1 skipped / 1 xfailed / 1 warning，退出码 0；四业务 16/16 完成，云调用 0，归档核验通过。控制台健康检查、首页、资源及认证查询通过。原始记录与修复前的打包失败一并保留在证据包。
 
-在仓库根目录执行：
-
-```sh
-cd competition/submission
-
-# 1) 作品报告（封面+目录+页脚页码）
-uv run --no-project --with reportlab python3 tools/build_report_pdf.py \
-  作品报告-溯界.md "dist/溯界-作品报告.pdf"
-uv run --no-project --with python-docx python3 tools/build_report_docx.py \
-  作品报告-溯界.md "dist/溯界-作品报告.docx"
-
-# 2) 原创性声明（待签名）与两份说明文档
-uv run --no-project --with python-docx python3 tools/build_report_docx.py \
-  作品原创性声明-溯界.md "dist/溯界-作品原创性声明.docx"
-for f in 作品原创性声明-溯界 部署说明-溯界 测试样例与流程说明-溯界; do
-  uv run --no-project --with reportlab python3 tools/build_report_pdf.py --plain \
-    "$f.md" "dist/$f.pdf"
-done
-
-# 3) 先重跑确定性评测产生真实证据，再打包
-cd ../../sujie
-.venv/bin/python eval/run_business_validation.py \
-  --protocol-file eval/protocols/four_business_workflows_v2.json \
-  --out-dir eval/reports/runs/competition_repro_$(date +%Y%m%d)
-.venv/bin/python eval/verify_runtime_validation.py eval/reports/runs/competition_repro_$(date +%Y%m%d)
-.venv/bin/python dev.py eval-detection > /tmp/detection_v1.json
-cd ../competition/submission
-python3 tools/build_evidence_packet.py --out "dist/证据包-溯界-确定性复现.zip" \
-  --run ../../sujie/eval/reports/runs/competition_repro_$(date +%Y%m%d) \
-  --log "/tmp/detection_v1.json=detection_v1.json"
-
-# 4) 源码包
-cd ../..
-python3 competition/submission/tools/build_source_package.py --root . \
-  --out "competition/submission/dist/源码包-溯界.zip"
-```
-
-## 术语纪律（全篇遵守）
-
-- 不得把**确定性回归条数**当作攻击样本量或比赛 ASR；
-- 不得把**云模型小样本**结果写成比赛成功率或公开基准成绩；
-- “模型未提出危险动作” ≠ “网关拦截了危险动作”；
-- 未验收项（如新版 Linux 整体隔离/性能、一键部署）必须显式标注；
-- 参考文献须按 GB/T 7714-2015 著录：当前 11 条已核对题名/作者/年份/编号（arXiv 接口与官方站点），正式出版卷期页码以出版方为准。
+跳过项为未分发的固定分词器资产；预期失败记录“审批后超限返回缺少部分效果审计事件”，是尚未修复的缺口。历史云模型原始记录不随包提交，本次报告不列其数字。完整拓扑隔离、真实模型比较及生产性能仍未验收。
