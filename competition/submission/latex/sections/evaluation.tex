@@ -6,7 +6,7 @@
 
 当前基线的验证元数据位于源码包的\path{docs/validation/MAIN_SYNC_VALIDATION_2026-10-20.json}，含312份运行时源文件的SHA-256、三平台回归结果、离线检测评测结果与退出码。报告绑定记录\path{competition/submission/latex/runtime-version.json}固定引用提交及记录哈希，交付包按同一清单检查源码。历史M25结果见\path{docs/validation/M25_LOCAL_ACCEPTANCE_2026-10-18.json}。摘要清单用于核对文件一致性，不能替代原始观察。
 
-开发端使用Python 3.12和锁定依赖，前端执行Vue类型检查与生产构建。M24容器环境为Linux/aarch64、Python 3.12.14、Git 2.47.3；宿主为Docker Desktop。各平台记录只在其自身范围内解释。
+本次解压复验设备为Apple M5、16 GiB内存、macOS 27.0.1，Python 3.12.15；前端以Node 24.21.0执行Vue类型检查与生产构建。历史三平台回归的操作系统与Python版本以对应CI记录为准。M24容器环境为Linux/aarch64、Python 3.12.14、Git 2.47.3；宿主为Docker Desktop。各平台记录只在其自身范围内解释。
 
 表\ref{tab:evidence}列出主要结论及其证据入口；源码包与证据包的目录分别说明。
 
@@ -42,6 +42,8 @@ macOS本机复跑 & 1107 passed，1 skipped，1 xfailed，1 warning；512秒；�
 M24 Linux六链 & 六候选各一实例完成，容器退出码0，主机独立重算通过 & 单容器、同UID、脚本模型，无云调用\\\bottomrule
 \end{tabularx}
 \end{table}
+
+表中的预期失败（xfailed）并非通过：审批执行后若返回超限，部分效果影响事件缺失；相关回归保留这一已知审计缺口。跳过项包括未随包分发的固定分词器资产。
 
 这三次运行均通过各自的回归门禁，Windows另有一项平台跳过；结果支持这些测试在三种环境下复核，不能替代新机器安装与页面交互验收。M24容器使用UID/GID 10001、只读rootfs、\texttt{--network none}、CapDrop ALL、no-new-privileges、pids与内存限额及指定tmpfs；观测到CapEff为0、NoNewPrivs为1、rootfs写探针返回EROFS，仅loopback处于UP且无可用默认路由。该记录验证六候选有限链路的运行约束，未测量完整矩阵的隔离或吞吐开销。
 
