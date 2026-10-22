@@ -1,0 +1,26 @@
+{
+  "schema": "sujie-report-figure-restoration-v1",
+  "date_beijing": "2026-10-22",
+  "original_commit": "818710a20e23d84df3ef79f9ac4e8c7848ca08bb",
+  "scope": "Original drawing code restored; only captions retain factual scope. No runtime or test data changed.",
+  "report": {
+    "pages": 23,
+    "bytes": 284424,
+    "sha256": "96925cf8c41b35bac65e58ca8f3c39280e04258a81e791b756a490a2985e7062",
+    "font": "SimSun 5.23"
+  },
+  "drawings": {
+    "architecture.tex": {
+      "drawing_matches_original": true,
+      "drawing_sha256": "5b333ed2665efac7067bad3744484edc834779a0de3b7f8fe533b1e72659c7c6"
+    },
+    "provenance.tex": {
+      "drawing_matches_original": true,
+      "drawing_sha256": "781c2627ba50e6e759f02ebf81557e43dcade86e60ce0f69772623210f738547"
+    },
+    "decision-flow.tex": {
+      "drawing_matches_original": true,
+      "drawing_sha256": "4b5da56f450441ec9c34e7e775bbf9540a5a7d842bcc4264d61dba01ed97646f"
+    }
+  }
+}
