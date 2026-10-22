@@ -9,14 +9,14 @@
 \node[box,fill=blue!5] (gate) at (0,-2.3) {网关执行前核验\\物化参数、效果适配\\契约 / Grant / 来源 / DSL};
 \node[box,fill=orange!8] (approval) at (5,-2.3) {操作员控制台\\查看预览、批准、提交\\提交前重新核验};
 \node[box,fill=green!6] (tools) at (0,-4.7) {已注册适配器 / stdio MCP\\文件、网络、Git、程序\\记忆与受控委派};
-\node[box,fill=black!5] (ledger) at (5,-4.7) {事件账本与实际收据\\离线溯源图 / 时间线\\脱敏导出与独立核验};
+\node[box,fill=black!5] (ledger) at (5,-4.7) {全部决策与执行收据\\离线溯源图 / 时间线\\脱敏导出与独立核验};
 \draw[arr] (host)-- node[lab,left]{动作提议} (gate);
 \draw[arr] (source)-- node[lab,above]{登记后输入模型} (host);
 \draw[arr] (gate)-- node[lab,left]{ALLOW} (tools);
 \draw[arr] (gate)-- node[lab,above]{ASK} (approval);
-\draw[arr] (approval.south west)-- node[lab,right]{批准后提交复核} (gate.south east);
+\draw[arr] (approval.south)--(5,-3.3)-- node[lab,below]{批准后提交复核} (0,-3.3)--(gate.south);
 \draw[arr] (tools.west)--++(-0.65,0)|- node[lab,pos=0.15,left]{结果回流} (source.north);
-\draw[arr,dashed] (gate.south east)-- node[lab,above,sloped]{决策事件（含BLOCK）} (ledger.north west);
+
 \draw[arr,dashed] (tools)-- node[lab,above]{执行与状态记录} (ledger);
 \end{tikzpicture}}
 \caption{原型处理路径。宿主包含网关，规则初筛与动作授权分别核验；阻断后的对齐说明和离线溯源图不构成独立执行前语义判定。}\label{fig:architecture}

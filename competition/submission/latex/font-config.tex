@@ -1,5 +1,10 @@
 % Proprietary fonts are not distributed. Set \RequireOfficialFont for final checking.
-\IfFontExistsTF{SimSun}{
+\IfFileExists{.local-fonts/simsun.ttc}{
+  \setCJKmainfont{simsun.ttc}[Path=.local-fonts/,FontIndex=0,AutoFakeBold=2]
+  \setCJKsansfont{simsun.ttc}[Path=.local-fonts/,FontIndex=0,AutoFakeBold=2]
+  \setCJKmonofont{simsun.ttc}[Path=.local-fonts/,FontIndex=0]
+  \typeout{SUJIE-FONT: SimSun (local font file, not distributed)}
+}{\IfFontExistsTF{SimSun}{
   \setCJKmainfont{SimSun}[AutoFakeBold=2]
   \setCJKsansfont{SimSun}[AutoFakeBold=2]
   \setCJKmonofont{SimSun}
@@ -19,7 +24,7 @@
     \setCJKmonofont{FandolSong-Regular}
     \typeout{SUJIE-FONT: FandolSong (draft substitute; verify final SimSun requirement)}
   }
-}
+}}
 \setmainfont{texgyretermes-regular.otf}[
   BoldFont=texgyretermes-bold.otf,
   ItalicFont=texgyretermes-italic.otf,

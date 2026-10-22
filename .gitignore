@@ -41,6 +41,7 @@ competition/submission/latex/*.fdb_latexmk
 competition/submission/latex/*.synctex.gz
 competition/submission/latex/*.xdv
 competition/submission/latex/*.pdf
+competition/submission/latex/.local-fonts/
 
 # Local validation archives and runtime state are handed over separately.
 competition/reviews/

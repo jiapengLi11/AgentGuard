@@ -91,18 +91,18 @@ def register_fonts() -> None:
 def styles() -> dict[str, ParagraphStyle]:
     body = ParagraphStyle(
         "body", fontName=FONT, fontSize=BODY_PT, leading=LEADING,
-        firstLineIndent=BODY_INDENT, spaceAfter=0, wordWrap="CJK",
+        firstLineIndent=BODY_INDENT, spaceAfter=0, wordWrap="CJK", allowWidows=0, allowOrphans=0,
     )
     return {
         "body": body,
         "h1": ParagraphStyle("h1", parent=body, fontName=FONT_BOLD, fontSize=16, leading=24,
-                             alignment=TA_CENTER, firstLineIndent=0, spaceAfter=10),
+                             alignment=TA_CENTER, firstLineIndent=0, spaceAfter=10, keepWithNext=True),
         "h2": ParagraphStyle("h2", parent=body, fontName=FONT_BOLD, fontSize=14, leading=21,
-                             firstLineIndent=0, spaceBefore=12, spaceAfter=6),
+                             firstLineIndent=0, spaceBefore=12, spaceAfter=6, keepWithNext=True),
         "h3": ParagraphStyle("h3", parent=body, fontName=FONT_BOLD, fontSize=13, leading=20,
-                             firstLineIndent=0, spaceBefore=8, spaceAfter=4),
+                             firstLineIndent=0, spaceBefore=8, spaceAfter=4, keepWithNext=True),
         "h4": ParagraphStyle("h4", parent=body, fontName=FONT_BOLD, fontSize=12, leading=18,
-                             firstLineIndent=0, spaceBefore=6, spaceAfter=3),
+                             firstLineIndent=0, spaceBefore=6, spaceAfter=3, keepWithNext=True),
         "quote": ParagraphStyle("quote", parent=body, fontSize=10.5, leading=16,
                                 leftIndent=18, firstLineIndent=0, textColor=colors.HexColor("#444444")),
         "list": ParagraphStyle("list", parent=body, leftIndent=30, bulletIndent=12, firstLineIndent=0),
