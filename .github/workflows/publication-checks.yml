@@ -1,0 +1,56 @@
+name: Publication checks
+
+on:
+  push:
+    paths:
+      - "competition/submission/tools/**"
+      - "competition/submission/release/**"
+      - "docs/PROJECT_CLOSEOUT_2026-10-23.md"
+      - "docs/validation/PROJECT_CLOSEOUT_2026-10-23.json"
+      - ".github/workflows/publication-checks.yml"
+  pull_request:
+    paths:
+      - "competition/submission/tools/**"
+      - "competition/submission/release/**"
+      - "docs/PROJECT_CLOSEOUT_2026-10-23.md"
+      - "docs/validation/PROJECT_CLOSEOUT_2026-10-23.json"
+      - ".github/workflows/publication-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-materials:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Publication and source-binding regression tests
+        run: python -m unittest discover -s competition/submission/tools -p 'test_*.py' -v
+      - name: Validate report source binding
+        run: python competition/submission/tools/check_report_latex.py
+      - name: Reject public signature attachments and private key files
+        run: |
+          python - <<'PY'
+          import subprocess
+          from pathlib import PurePosixPath
+          paths = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
+          forbidden = []
+          for name in filter(None, paths):
+              p = PurePosixPath(name)
+              lower = name.lower()
+              if p.suffix.lower() in {".pem", ".key", ".p12", ".pfx", ".sqlite3"}:
+                  forbidden.append(name)
+              if "originality-statement" in lower or "原创性声明" in lower:
+                  if p.suffix.lower() in {".pdf", ".docx", ".png", ".jpg"}:
+                      forbidden.append(name)
+          assert not forbidden, "Private attachments found; inspect privately"
+          print("No private signature attachments or key files tracked")
+          PY

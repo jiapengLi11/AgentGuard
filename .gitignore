@@ -50,3 +50,13 @@ competition/reviews/
 *.sqlite3-*
 *.db
 *credentials*.csv
+
+# Signed identity paperwork is private; keep the blank template and builder.
+.private/
+signatures/
+**/*originality-statement.pdf
+**/*originality-statement.docx
+**/*原创性声明.pdf
+**/*原创性声明.docx
+**/*-signed.pdf
+**/*-signed.docx

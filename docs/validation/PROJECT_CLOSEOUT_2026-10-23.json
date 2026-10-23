@@ -1,0 +1,56 @@
+{
+  "schema": "sujie-public-closeout-v1",
+  "date_beijing": "2026-10-23",
+  "scope": "public-materials-privacy-and-publication-not-new-runtime-evaluation",
+  "pre_closeout_main": "d4141fdac9668e20f03ef88e23cb80562c1c936f",
+  "runtime": {
+    "modified_in_closeout": false,
+    "same_sujie_tree_as_ci_commit": "985417a437eec6c7b53ce4f64c52f72369499f6d",
+    "ci_run_id": 39599299709,
+    "ci_conclusion_verified_this_turn": "success",
+    "jobs": ["compose-config", "python-check (ubuntu-latest)", "python-check (windows-latest)", "console-build"],
+    "frozen_submission_commit": "96d591b14460a531004ae2b18aa4004a24af78d3",
+    "report_binding_commit": "1b64b1fdfbbd108decdede7383adc5cfb297626d"
+  },
+  "checks": {
+    "publication_and_report_unittests": {"passed": 14, "failed": 0},
+    "report_source_binding": {"files": 312, "mismatches": 0, "current_tree_matches_frozen_report": false},
+    "pip_check": "No broken requirements found",
+    "git_diff_check": "passed",
+    "pdfs": "current public report/deployment/test PDFs have no nonempty Author metadata or PDF signature fields; report cover visually inspected",
+    "credentials": "tracked-text token and bearer candidates absent; two PEM markers manually classified as nonfunctional synthetic fixtures",
+    "privacy_scan_scope": "tracked files plus nested publication ZIP contents, PDF text and metadata; test fixture usernames and synthetic sandbox paths manually excluded from identity findings",
+    "publication_asset_sha256": 7,
+    "not_a_guarantee_of_absence_of_all_pii": true
+  },
+  "historical_archive": {
+    "asset": "sujie-historical-evidence-m13-m21.zip",
+    "run_directories": 42,
+    "text_files": 483,
+    "excluded_sqlite_and_journals": 62,
+    "content_redactions": 0,
+    "published_bytes_match_original_files": true,
+    "includes_failures_and_incomplete_runs": true,
+    "is_new_model_evaluation_or_asr": false
+  },
+  "privacy_cleanup": {
+    "release_identity_attachments_removed": 4,
+    "release_tags": ["submission-2026-10-18", "submission-2026-10-20"],
+    "local_private_backups_retained": true,
+    "tracked_artifacts_renamed_without_person_name": 4,
+    "old_source_package_non_runtime_official_attachments_removed": 6,
+    "old_source_package_packaging_manifest_reverified": true,
+    "git_history_rewritten": false,
+    "external_downloads_cannot_be_recalled": true
+  },
+  "known_gaps": [
+    "approved oversized tool result partial-effect audit xfail",
+    "independent real-model main comparison and statistical Execution ASR",
+    "full tool and role topology isolation",
+    "production latency and throughput acceptance",
+    "complete external host adaptation",
+    "demonstration video not recorded"
+  ],
+  "repo_archived_read_only": false,
+  "competition_portal_modified": false
+}
