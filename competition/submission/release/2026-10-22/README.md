@@ -2,8 +2,8 @@
 
 此目录保存三个已检查 PDF：23 页宋体报告、4 页部署说明、6 页测试说明。用于取代 2026-10-20 的旧文稿。正文与当前 `latex/` 对应，程序仍固定在报告已验证的 `96d591b`；详见 [逐页复核记录](../../交付复核-2026-10-22.md)。
 
-正式上传时，重命名为“李嘉鹏+溯界+资料名称”。报告 SHA-256 为 `96925cf8c41b35bac65e58ca8f3c39280e04258a81e791b756a490a2985e7062`。CI 使用替代字体的检查版不能覆盖本目录宋体产物。
+正式上传时，重命名为“队长姓名+溯界+资料名称”。报告 SHA-256 为 `96925cf8c41b35bac65e58ca8f3c39280e04258a81e791b756a490a2985e7062`。CI 使用替代字体的检查版不能覆盖本目录宋体产物。
 
-冻结程序包、证据包和 LaTeX 工程通过 [本次 Release](https://github.com/jiapengLi11/AgentGuard/releases/tag/submission-2026-10-22) 分发。原有四签声明保持原文件，由队长在本机上传；本次不把签名和字体文件重新放进仓库或 Release。
+冻结程序包、证据包和 LaTeX 工程通过 [本次 Release](https://github.com/jiapengLi11/AgentGuard/releases/tag/submission-2026-10-22) 分发，并保留于[结项 Release](https://github.com/jiapengLi11/AgentGuard/releases/tag/closeout-2026-10-23)。签名版声明仅本地私密保留，历史 Release 的声明附件已移除；签名和字体文件不公开。
 
 这是当前原型的提交候选材料，已知预期失败、分词器跳过及未验收项目见复核记录。本次没有操作比赛平台。
